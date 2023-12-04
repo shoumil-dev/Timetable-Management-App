@@ -1,16 +1,18 @@
 import { auth } from "../firebase-handler"
 import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
   const signIn = (e) => {
     e.preventDefault();
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         console.log(userCredential);
+        navigate("/home");
       })
       .catch((error) => {
         console.log(error);
@@ -90,7 +92,7 @@ const SignIn = () => {
           <div className="flex items-center justify-center">
             <div className="text-sm">
               <a
-                href='localhost:3000/signup'
+                href='http://localhost:3000/signup'
                 className="font-semibold text-gray-900 hover:text-neutral-500 underline"
               >
                 Create account?
