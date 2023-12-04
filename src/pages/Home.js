@@ -8,7 +8,7 @@ const Home = () => {
                 <ul className="flex space-x-4">
                 <li><a href="#" className="hover:text-gray-400">Home</a></li>
                 <li><a href="#" className="hover:text-gray-400">Unit allocation</a></li>
-                <li><a href="#" className="hover:text-gray-400">Timeslot allocation</a></li>
+                <li><a href="http://localhost:3000/Select" className="hover:text-gray-400">Timeslot allocation</a></li>
                 <li className="ml-auto">
                     <a href="http://localhost:3000/" className="hover:text-gray-400">
                     Log Out
