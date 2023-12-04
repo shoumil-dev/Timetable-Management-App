@@ -10,7 +10,7 @@ const Home = () => {
                 <li><a href="#" className="hover:text-gray-400">Unit allocation</a></li>
                 <li><a href="#" className="hover:text-gray-400">Timeslot allocation</a></li>
                 <li className="ml-auto">
-                    <a href="http://localhost:3000/signIn" className="hover:text-gray-400">
+                    <a href="http://localhost:3000/" className="hover:text-gray-400">
                     Log Out
                     </a>
                 </li>
