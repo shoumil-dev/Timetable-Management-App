@@ -1,6 +1,21 @@
 const Home = () => {
     return (
         <div class="mx-4 bg-white dark:bg-slate-800 shadow-xl overflow-hidden">
+            <header className="bg-black text-white text-center font-serif text-3xl py-6 border-b border-white dark:border-slate-800">
+                Time Table Monash
+            </header>
+            <nav className="bg-black text-white p-4">
+                <ul className="flex space-x-4">
+                <li><a href="#" className="hover:text-gray-400">Home</a></li>
+                <li><a href="#" className="hover:text-gray-400">Unit allocation</a></li>
+                <li><a href="#" className="hover:text-gray-400">Timeslot allocation</a></li>
+                <li className="ml-auto">
+                    <a href="http://localhost:3000/signIn" className="hover:text-gray-400">
+                    Log Out
+                    </a>
+                </li>
+                </ul>
+            </nav>
             <div class="overflow-scroll grid grid-cols-[70px,repeat(7,250px)] grid-rows-[auto,repeat(16,50px)] max-h-[800px]">
                 
                 <div class="row-start-[1] col-start-[1] sticky top-0 z-10 bg-white dark:bg-gradient-to-b dark:from-slate-600 dark:to-slate-700 border-slate-100 dark:border-black/10 bg-clip-padding text-slate-900 dark:text-slate-200 border-b text-sm font-medium py-2"></div>
