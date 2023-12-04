@@ -1,28 +1,32 @@
 const Select = () => {
     return (
-        <div class="overflow-auto h-72 relative max-w-sm mx-auto bg-white dark:bg-slate-800 dark:highlight-white/5 shadow-lg ring-1 ring-black/5 rounded-xl flex flex-col divide-y dark:divide-slate-200/5">
-            <div class="flex items-center gap-4 p-4">
-                <div class="flex flex-col">
-                    <strong class="text-slate-900 text-sm font-medium dark:text-slate-200">Andrew Alfred</strong>
-                    <span class="text-slate-500 text-sm font-medium dark:text-slate-400">Technical advisor</span>
+        
+        <div>
+            <div class="flex h-screen">
+                
+
+                <div className="overflow-auto ring-2 ring-gray-300 w-1/5 rounded-2xl text-xl font-mono mr-4 m-20 text-center">
+                    <div class="p-8 hover:bg-black hover:text-white border-b-2">
+                        <button >FIT3170</button>
+                    </div>
+                    <div class="p-8 hover:bg-black hover:text-white border-b-2">
+                        <button>FIT3134</button>
+                    </div>
                 </div>
-            </div>
-            <div class="flex items-center gap-4 p-4">
-                <div class="flex flex-col">
-                    <strong class="text-slate-900 text-sm font-medium dark:text-slate-200">Debra Houston</strong>
-                    <span class="text-slate-500 text-sm font-medium dark:text-slate-400">Analyst</span>
-                </div>
-            </div>
-            <div class="flex items-center gap-4 p-4">
-                <div class="flex flex-col">
-                    <strong class="text-slate-900 text-sm font-medium dark:text-slate-200">Jane White</strong>
-                    <span class="text-slate-500 text-sm font-medium dark:text-slate-400">Director, Marketing</span>
-                </div>
-            </div>
-            <div class="flex items-center gap-4 p-4">
-                <div class="flex flex-col">
-                    <strong class="text-slate-900 text-sm font-medium dark:text-slate-200">Ray Flint</strong>
-                    <span class="text-slate-500 text-sm font-medium dark:text-slate-400">Technical Advisor</span>
+
+                <div className="overflow-auto ring-2 ring-gray-300 w-4/5 rounded-2xl text-xl font-mono ml-4 m-20">
+                    <div class="flex justify-between border-b-2">
+                        <span class="m-8">Tutorial 9:00 - 11:00</span>
+                        <button class="ring-2 ring-gray-300 hover:bg-gray-100 rounded-2xl float-right py-2 px-10 m-6">Select</button>
+                    </div>
+                    <div class="flex justify-between border-b-2">
+                        <span class="m-8">Tutorial 12:00 - 14:00</span>
+                        <button class="ring-2 ring-gray-300 hover:bg-gray-100 rounded-2xl float-right py-2 px-10 m-6">Select</button>
+                    </div>
+                    <div class="flex justify-between border-b-2">
+                        <span class="m-8">Tutorial 15:00 - 17:00</span>
+                        <button class="ring-2 ring-gray-300 hover:bg-gray-100 rounded-2xl float-right py-2 px-10 m-6">Select</button>
+                    </div>
                 </div>
             </div>
         </div>
