@@ -34,14 +34,14 @@ const CreateUnit = () => {
     };
 
     const handleAddTimeSlot = async () => {
-    if (newTimeSlot.trim() !== "") {
-        const updatedTimeSlots = [...timeSlots, newTimeSlot.trim()];
-        const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
-        await updateDoc(unitDocRef, { timeslot: updatedTimeSlots });
-        setTimeSlots(updatedTimeSlots);
-        setIsAddTimeSlotModalOpen(false);
-    }
-    };
+        if (selectedUnit && newTimeSlot.trim() !== "") {
+          const updatedTimeSlots = [...timeSlots, newTimeSlot.trim()];
+          const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
+          await updateDoc(unitDocRef, { timeslot: updatedTimeSlots });
+          setTimeSlots(updatedTimeSlots);
+          setIsAddTimeSlotModalOpen(false);
+        }
+      };
 
     useEffect(() => {
         const fetchData = async () => {
