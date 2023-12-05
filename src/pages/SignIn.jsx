@@ -2,6 +2,8 @@ import { auth } from "../firebase-handler"
 import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { setDoc, doc, getDoc, updateDoc, addDoc, collection } from "firebase/firestore";
+import { db } from "../firebase-handler";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -11,8 +13,30 @@ const SignIn = () => {
     e.preventDefault();
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        console.log(userCredential);
-        navigate("/home");
+        const userId = userCredential.user.uid;
+        console.log("userId:", userId);
+        const userRef = doc(db, "users", userId);
+
+        getDoc(userRef).then((docSnapShot) => {
+          if (docSnapShot.exists()) {
+            setDoc(userRef, {
+              email: email,
+              password: password
+            });
+            console.log(userCredential);
+            navigate("/home");
+          } else {
+            addDoc(collection(db, "users"), {
+              userId,
+              email,
+              password
+            })
+            console.log("Logged in Successfully");
+            navigate("/home")
+          }
+        })
+
+        
       })
       .catch((error) => {
         console.log(error);
