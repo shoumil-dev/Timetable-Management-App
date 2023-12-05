@@ -49,17 +49,12 @@ const CreateUnit = () => {
             updatedTimeSlots.push(newTimeSlot.trim());
     
             console.log("Updated Time Slots:", updatedTimeSlots);
-    
-            const unitDocRef = doc(collection(db, "units"), selectedUnit.title);
-            console.log("Unit Doc Ref:", unitDocRef);
-    
-          
-            await updateDoc(unitDocRef, { timeslot: updatedTimeSlots });
-            console.log("Time Slots after update:", updatedTimeSlots);
+
+            const unitDocRef = doc(collection(db, "units"), documentId(selectedUnit.id));
+
     
             setTimeSlots(updatedTimeSlots);
-            setIsAddTimeSlotModalOpen(false);
-           
+  
         }
     };
 
