@@ -36,25 +36,29 @@ const CreateUnit = () => {
     const handleAddTimeSlot = async () => {
         console.log("Selected Unit:", selectedUnit);
         console.log("New Time Slot:", newTimeSlot.trim());
-        console.log("Selected Unit ID", selectedUnit.title);
+        console.log("Selected Unit ID:", selectedUnit.id);
     
-        if (selectedUnit && selectedUnit.title && newTimeSlot.trim() !== "") {
+        if (selectedUnit && selectedUnit.id && newTimeSlot.trim() !== "") {
             let updatedTimeSlots = [];
     
             if (selectedUnit.timeslot) {
-                // If the "timeslot" field exists, use its current value
                 updatedTimeSlots = [...selectedUnit.timeslot];
             }
     
             updatedTimeSlots.push(newTimeSlot.trim());
     
             console.log("Updated Time Slots:", updatedTimeSlots);
-
-            const unitDocRef = doc(collection(db, "units"), documentId(selectedUnit.id));
-
     
-            setTimeSlots(updatedTimeSlots);
-  
+            const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
+            console.log("unit doc:", unitDocRef)
+    
+            try {
+                await updateDoc(unitDocRef, { timeslot: updatedTimeSlots });
+                setTimeSlots(updatedTimeSlots);
+                setIsAddTimeSlotModalOpen(false);
+            } catch (error) {
+                console.error("Error updating document:", error);
+            }
         }
     };
 
@@ -72,7 +76,7 @@ const CreateUnit = () => {
     const handleUnitClick = async (unit) => {
         const unitDoc = units.find((u) => u.title === unit);
         if (unitDoc) {
-            setSelectedUnit({ ...unitDoc, title: unit });
+            setSelectedUnit({ ...unitDoc, title: unit, id: unitDoc.id });
             const timeSlotsData = unitDoc.timeslot || [];
             setTimeSlots(timeSlotsData);
         }
