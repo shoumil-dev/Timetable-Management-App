@@ -12,37 +12,30 @@ const SignIn = () => {
   const signIn = (e) => {
     e.preventDefault();
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const userId = userCredential.user.uid;
-        console.log("userId:", userId);
-        const userRef = doc(db, "users", userId);
+  .then((userCredential) => {
+    const userId = userCredential.user.uid;
+    console.log("userId:", userId);
+    const userRef = doc(db, "users", userId);
 
-        getDoc(userRef).then((docSnapShot) => {
-          if (docSnapShot.exists()) {
-            setDoc(userRef, {
-              email: email,
-              password: password
-            });
-            console.log(userCredential);
-            navigate("/home");
-          } else {
-            const usersRef = collection(db, "users")
-            setDoc(doc(usersRef, userId), {
-              userId,
-              email,
-              password,
-              slots: [],
-            })
-            console.log("Logged in Successfully");
-            navigate("/home")
-          }
+    getDoc(userRef).then((docSnapShot) => {
+      if (docSnapShot.exists()) {
+        console.log("User already exists:", userId);
+        navigate("/home");
+      } else {
+        const usersRef = collection(db, "users")
+        setDoc(doc(usersRef, userId), {
+          userId,
+          email,
+          slots: [],
         })
-
-        
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+        console.log("Logged in Successfully");
+        navigate("/home")
+      }
+    })
+  })
+  .catch((error) => {
+    console.log(error);
+  });
   };
 
   return (
