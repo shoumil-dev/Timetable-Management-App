@@ -5,7 +5,7 @@ import { auth } from "../firebase-handler"
 
 const CreateUnit = () => {
     const [units, setUnits] = useState([]);
-    const [selectedUnit, setSelectedUnit] = useState(null);
+    const [selectedUnit, setSelectedUnit] = useState({});
     const [timeSlots, setTimeSlots] = useState([]);
     const [newUnit, setNewUnit] = useState("");
     const [isAddUnitModalOpen, setIsAddUnitModalOpen] = useState(false);
@@ -34,14 +34,34 @@ const CreateUnit = () => {
     };
 
     const handleAddTimeSlot = async () => {
-        if (selectedUnit && newTimeSlot.trim() !== "") {
-          const updatedTimeSlots = [...timeSlots, newTimeSlot.trim()];
-          const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
-          await updateDoc(unitDocRef, { timeslot: updatedTimeSlots });
-          setTimeSlots(updatedTimeSlots);
-          setIsAddTimeSlotModalOpen(false);
+        console.log("Selected Unit:", selectedUnit);
+        console.log("New Time Slot:", newTimeSlot.trim());
+        console.log("Selected Unit ID", selectedUnit.title);
+    
+        if (selectedUnit && selectedUnit.title && newTimeSlot.trim() !== "") {
+            let updatedTimeSlots = [];
+    
+            if (selectedUnit.timeslot) {
+                // If the "timeslot" field exists, use its current value
+                updatedTimeSlots = [...selectedUnit.timeslot];
+            }
+    
+            updatedTimeSlots.push(newTimeSlot.trim());
+    
+            console.log("Updated Time Slots:", updatedTimeSlots);
+    
+            const unitDocRef = doc(collection(db, "units"), selectedUnit.title);
+            console.log("Unit Doc Ref:", unitDocRef);
+    
+          
+            await updateDoc(unitDocRef, { timeslot: updatedTimeSlots });
+            console.log("Time Slots after update:", updatedTimeSlots);
+    
+            setTimeSlots(updatedTimeSlots);
+            setIsAddTimeSlotModalOpen(false);
+           
         }
-      };
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -55,15 +75,13 @@ const CreateUnit = () => {
     }, []);
 
     const handleUnitClick = async (unit) => {
-        setSelectedUnit(unit);
         const unitDoc = units.find((u) => u.title === unit);
         if (unitDoc) {
-          const timeSlotsData = unitDoc.timeslot || [];
-          setTimeSlots(timeSlotsData);
+            setSelectedUnit({ ...unitDoc, title: unit });
+            const timeSlotsData = unitDoc.timeslot || [];
+            setTimeSlots(timeSlotsData);
         }
     };
-
-
 
     return(
         <div class="mx-4 bg-white dark:bg-slate-800 shadow-xl overflow-hidden">
