@@ -8,7 +8,7 @@ const Test = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    console.log(nameRef.current.value);
+    console.log(nameRef.current.value); 
 
     let data = {
       message: nameRef.current.value,
