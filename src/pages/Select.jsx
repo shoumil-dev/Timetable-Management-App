@@ -1,6 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import { db } from "../firebase-handler";
-import { addDoc, collection, getDocs } from "firebase/firestore";
+import { doc, addDoc, collection, getDocs, updateDoc, getDoc, documentId } from "firebase/firestore";
+import { auth } from "../firebase-handler"
+
 
 const Select = () => {
     const [units, setUnits] = useState([]);
@@ -26,6 +28,27 @@ const Select = () => {
         setTimeSlots(timeSlotsData);
         }
     };
+
+    const handleSelectButtonClick = async () => {
+      if (selectedUnit) {
+        const userId = auth.currentUser.uid;
+        console.log("current user Id: " + userId)
+
+        const usersRef = collection(db, "users")
+        const userDocRef = doc(usersRef, userId);
+        const userDocSnapshot = await getDoc(userDocRef);
+
+        if (userDocSnapshot.exists()) {
+          const existingSlots = userDocSnapshot.data().slots || [];
+          const newSlot = { unit: selectedUnit, timeSlot: timeSlots[0]};
+          await updateDoc(userDocRef, {
+            slots: [...existingSlots, newSlot],
+          });
+          console.log("Successfully added timeslot")
+        }
+
+      }
+    }
 
   return (
     <div className="font-mono text-lg">
@@ -61,6 +84,7 @@ const Select = () => {
               <span className="m-8">{timeSlot}</span>
               <button
                 className="ring-2 ring-gray-300 hover:bg-gray-100 rounded-2xl float-right py-2 px-10 m-6"
+                onClick={handleSelectButtonClick}
               >
                 Select
               </button>

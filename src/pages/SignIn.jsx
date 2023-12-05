@@ -26,10 +26,12 @@ const SignIn = () => {
             console.log(userCredential);
             navigate("/home");
           } else {
-            addDoc(collection(db, "users"), {
+            const usersRef = collection(db, "users")
+            setDoc(doc(usersRef, userId), {
               userId,
               email,
-              password
+              password,
+              slots: [],
             })
             console.log("Logged in Successfully");
             navigate("/home")
