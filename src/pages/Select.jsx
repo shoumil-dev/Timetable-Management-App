@@ -52,20 +52,22 @@ const Select = () => {
 
   return (
     <div className="font-mono text-lg">
-        <nav className="bg-black text-white p-4">
-            <ul className="flex space-x-4">
-            <li>
-                <a href="http://localhost:3000/home" className="hover:text-gray-400">
-                Home
-                </a>
-            </li>
-            <li className="ml-auto">
-                <a href="http://localhost:3000/" className="hover:text-gray-400">
-                Log Out
-                </a>
-            </li>
-            </ul>
-        </nav>
+        <header className="bg-black text-white text-center font-serif text-3xl py-6 border-b border-white dark:border-slate-800">
+                Time Table Monash
+            </header>
+            <nav className="bg-black text-white p-4">
+                <ul className="flex space-x-4">
+                <li><a href="http://localhost:3000/Home" className="hover:text-gray-400">Home</a></li>
+                <li><a href="#" className="hover:text-gray-400">Unit allocation</a></li>
+                <li><a href="http://localhost:3000/Select" className="hover:text-gray-400 bg-blue-500 text-white hover:bg-blue-600 p-4">Timeslot allocation</a></li>
+                <li className="ml-auto">
+                    <a href="http://localhost:3000/" className="hover:text-gray-400">
+                    Log Out
+                    </a>
+                </li>
+                <li><a href="http://localhost:3000/t" className="hover:text-gray-400">Test</a></li>
+                </ul>
+            </nav>
 
         <div className="flex h-screen">
         <div className="overflow-auto ring-2 ring-gray-300 w-1/5 rounded-2xl text-xl mr-4 m-20 text-center">

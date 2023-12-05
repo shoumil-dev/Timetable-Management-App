@@ -4,6 +4,7 @@ import SignUp from './pages/SignUp';
 import Select from './pages/Select';
 import Home from './pages/Home';
 import Test from './pages/Test';
+import CreateUnit from './pages/CreateUnit';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
             <Route path="/select" element={<Select />} />
             <Route path="/home" element={<Home />} />
             <Route path="/t" element={<Test />} />
+            <Route path="/Create" element={<CreateUnit />} />
 
           </Routes>
         </div>
