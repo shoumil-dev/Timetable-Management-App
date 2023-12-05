@@ -14,6 +14,7 @@ const Home = () => {
                     Log Out
                     </a>
                 </li>
+                <li><a href="http://localhost:3000/Test" className="hover:text-gray-400">Test</a></li>
                 </ul>
             </nav>
             <div class="overflow-scroll grid grid-cols-[70px,repeat(7,250px)] grid-rows-[auto,repeat(16,50px)] max-h-[800px]">
