@@ -29,26 +29,25 @@ const Select = () => {
         }
     };
 
-    const handleSelectButtonClick = async () => {
-      if (selectedUnit) {
+    const handleSelectButtonClick = async (timeSlot) => {
+      if (selectedUnit && timeSlot) {
         const userId = auth.currentUser.uid;
-        console.log("current user Id: " + userId)
-
-        const usersRef = collection(db, "users")
+        console.log("current user Id: " + userId);
+    
+        const usersRef = collection(db, "users");
         const userDocRef = doc(usersRef, userId);
         const userDocSnapshot = await getDoc(userDocRef);
-
+    
         if (userDocSnapshot.exists()) {
           const existingSlots = userDocSnapshot.data().slots || [];
-          const newSlot = { unit: selectedUnit, timeSlot: timeSlots[0]};
+          const newSlot = { unit: selectedUnit, timeSlot: timeSlot };
           await updateDoc(userDocRef, {
             slots: [...existingSlots, newSlot],
           });
-          console.log("Successfully added timeslot")
+          console.log("Successfully added timeslot");
         }
-
       }
-    }
+    };
 
   return (
     <div class="mx-4 bg-white dark:bg-slate-800 shadow-xl overflow-hidden">
@@ -79,17 +78,17 @@ const Select = () => {
           </div>
         
           <div className="overflow-auto ring-2 ring-gray-300 w-4/5 rounded-2xl text-xl ml-4 m-20">
-            {timeSlots.map((timeSlot, index) => (
-              <div key={index} className="flex justify-between border-b-2">
-                <span className="m-8">{timeSlot}</span>
-                <button
-                  className="ring-2 ring-gray-300 hover:bg-gray-100 rounded-2xl float-right py-2 px-10 m-6"
-                  onClick={handleSelectButtonClick}>
-                  Select
-                </button>
-              </div>
-            ))}
-          </div>
+  {timeSlots.map((timeSlot, index) => (
+    <div key={index} className="flex justify-between border-b-2">
+      <span className="m-8">{timeSlot}</span>
+      <button
+        className="ring-2 ring-gray-300 hover:bg-gray-100 rounded-2xl float-right py-2 px-10 m-6"
+        onClick={() => handleSelectButtonClick(timeSlot)}>
+        Select
+      </button>
+    </div>
+  ))}
+</div>
         </div>
       </div>
   );
