@@ -8,6 +8,7 @@ const Select = () => {
   const [selectedUnit, setSelectedUnit] = useState(null);
   const [timeSlots, setTimeSlots] = useState([]);
   const [selectedTimeslots, setSelectedTimeslots] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,34 +22,26 @@ const Select = () => {
   }, []);
 
   useEffect(() => {
-    // Load user-specific selected timeslots from Firestore on component mount
     const loadSelectedTimeslotsFromFirestore = async () => {
       const user = auth.currentUser;
-  
-      // Check if the user is authenticated before accessing uid
+
       if (user && user.uid) {
         const userId = user.uid;
         const usersRef = collection(db, "users");
         const userDocRef = doc(usersRef, userId);
         const userDocSnapshot = await getDoc(userDocRef);
-  
+
         if (userDocSnapshot.exists()) {
-          const userSelectedTimeslots = userDocSnapshot.data().slots || [];
-          const selectedTimeslotsData = {};
-  
-          userSelectedTimeslots.forEach((slot) => {
-            const { unit, timeSlot } = slot;
-            selectedTimeslotsData[unit] = [...(selectedTimeslotsData[unit] || []), timeSlot];
-          });
-  
-          setSelectedTimeslots(selectedTimeslotsData);
+          const userSelectedTimeslots = userDocSnapshot.data().slots || {};
+          setSelectedTimeslots(userSelectedTimeslots);
         }
+
+        setLoading(false);
       }
     };
-  
+
     loadSelectedTimeslotsFromFirestore();
   }, []);
-  
 
   const handleUnitClick = async (unit) => {
     setSelectedUnit(unit);
@@ -62,45 +55,46 @@ const Select = () => {
   const handleSelectButtonClick = async (timeSlot) => {
     if (selectedUnit && timeSlot) {
       const userId = auth.currentUser.uid;
-      console.log("current user Id: " + userId);
-  
-      // Check if the selected time slot is already present in Firestore
+
       const usersRef = collection(db, "users");
       const userDocRef = doc(usersRef, userId);
       const userDocSnapshot = await getDoc(userDocRef);
-  
+
       if (userDocSnapshot.exists()) {
         const existingSlots = userDocSnapshot.data().slots || [];
         const isAlreadySelected = existingSlots.some(
           (slot) => slot.unit === selectedUnit && slot.timeSlot === timeSlot
         );
-  
+
         if (isAlreadySelected) {
-          console.log("Time slot already selected");
-          return;
+          window.alert(`You have already selected ${timeSlot} for ${selectedUnit}.`);
+          return; // Do not proceed with further actions
         }
-  
-        // Confirmation dialog
-        const confirmed = window.confirm(`You have selected ${timeSlot} for ${selectedUnit}?`);
+
+        const confirmed = window.confirm(
+          `You are about to select ${timeSlot} for ${selectedUnit}. Do you want to proceed?`
+        );
+
         if (!confirmed) {
           return; // Do nothing if the user cancels the confirmation
         }
-  
-        // Update only the 'slots' field in Firestore
+
         await updateDoc(userDocRef, {
           slots: [...existingSlots, { unit: selectedUnit, timeSlot: timeSlot }],
         });
-  
-        // Update the selected timeslots in the state
+
         setSelectedTimeslots((prevSelectedTimeslots) => ({
           ...prevSelectedTimeslots,
           [selectedUnit]: [...(prevSelectedTimeslots[selectedUnit] || []), timeSlot],
         }));
-  
+
         console.log("Successfully added timeslot");
       }
     }
   };
+  
+  
+  
   
   
 
@@ -134,7 +128,7 @@ const Select = () => {
 
         <div className="overflow-auto ring-2 ring-gray-300 w-4/5 rounded-2xl text-xl ml-4 m-20">
           {timeSlots.map((timeSlot, index) => (
-            <div key={index} className="flex justify-between border-b-2">
+            <div key={index} className="flex justify-between">
               <span className="m-8">{timeSlot}</span>
               <button
                 className={`ring-2 ring-gray-300 ${
@@ -143,9 +137,11 @@ const Select = () => {
                     : "hover:bg-gray-100"
                 } rounded-2xl float-right py-2 px-10 m-6`}
                 onClick={() => handleSelectButtonClick(timeSlot)}
-                disabled={selectedTimeslots[selectedUnit]?.includes(timeSlot)}
+                disabled={loading || selectedTimeslots[selectedUnit]?.includes(timeSlot)}
               >
-                {selectedTimeslots[selectedUnit]?.includes(timeSlot) ? "Selected" : "Select"}
+                {selectedTimeslots[selectedUnit]?.includes(timeSlot)
+                  ? "Selected"
+                  : "Select"}
               </button>
             </div>
           ))}
