@@ -75,13 +75,17 @@ const Select = () => {
           (slot) => slot.unit === selectedUnit && slot.timeSlot === timeSlot
         );
   
+        // Display a confirmation window if the time slot is already selected
         if (isAlreadySelected) {
-          console.log("Time slot already selected");
-          return;
+          window.alert(`You have already selected ${timeSlot} for ${selectedUnit}.`);
+          return; // Do not proceed with further actions
         }
   
-        // Confirmation dialog
-        const confirmed = window.confirm(`You have selected ${timeSlot} for ${selectedUnit}?`);
+        // Confirmation dialog for selecting a new time slot
+        const confirmed = window.confirm(
+          `You are about to select ${timeSlot} for ${selectedUnit}. Do you want to proceed?`
+        );
+  
         if (!confirmed) {
           return; // Do nothing if the user cancels the confirmation
         }
@@ -101,6 +105,9 @@ const Select = () => {
       }
     }
   };
+  
+  
+  
   
   
 
