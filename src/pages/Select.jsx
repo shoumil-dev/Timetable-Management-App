@@ -21,10 +21,34 @@ const Select = () => {
   }, []);
 
   useEffect(() => {
-    // Load selected timeslots from localStorage on component mount
-    const storedSelectedTimeslots = JSON.parse(localStorage.getItem("selectedTimeslots")) || {};
-    setSelectedTimeslots(storedSelectedTimeslots);
+    // Load user-specific selected timeslots from Firestore on component mount
+    const loadSelectedTimeslotsFromFirestore = async () => {
+      const user = auth.currentUser;
+  
+      // Check if the user is authenticated before accessing uid
+      if (user && user.uid) {
+        const userId = user.uid;
+        const usersRef = collection(db, "users");
+        const userDocRef = doc(usersRef, userId);
+        const userDocSnapshot = await getDoc(userDocRef);
+  
+        if (userDocSnapshot.exists()) {
+          const userSelectedTimeslots = userDocSnapshot.data().slots || [];
+          const selectedTimeslotsData = {};
+  
+          userSelectedTimeslots.forEach((slot) => {
+            const { unit, timeSlot } = slot;
+            selectedTimeslotsData[unit] = [...(selectedTimeslotsData[unit] || []), timeSlot];
+          });
+  
+          setSelectedTimeslots(selectedTimeslotsData);
+        }
+      }
+    };
+  
+    loadSelectedTimeslotsFromFirestore();
   }, []);
+  
 
   const handleUnitClick = async (unit) => {
     setSelectedUnit(unit);
@@ -39,33 +63,46 @@ const Select = () => {
     if (selectedUnit && timeSlot) {
       const userId = auth.currentUser.uid;
       console.log("current user Id: " + userId);
-
+  
+      // Check if the selected time slot is already present in Firestore
       const usersRef = collection(db, "users");
       const userDocRef = doc(usersRef, userId);
       const userDocSnapshot = await getDoc(userDocRef);
-
+  
       if (userDocSnapshot.exists()) {
         const existingSlots = userDocSnapshot.data().slots || [];
-        const newSlot = { unit: selectedUnit, timeSlot: timeSlot };
-
-        // Update the selected timeslots for the current unit
-        const newSelectedTimeslots = {
-          ...selectedTimeslots,
-          [selectedUnit]: [...(selectedTimeslots[selectedUnit] || []), timeSlot],
-        };
-
-        setSelectedTimeslots(newSelectedTimeslots);
+        const isAlreadySelected = existingSlots.some(
+          (slot) => slot.unit === selectedUnit && slot.timeSlot === timeSlot
+        );
+  
+        if (isAlreadySelected) {
+          console.log("Time slot already selected");
+          return;
+        }
+  
+        // Confirmation dialog
+        const confirmed = window.confirm(`You have selected ${timeSlot} for ${selectedUnit}?`);
+        if (!confirmed) {
+          return; // Do nothing if the user cancels the confirmation
+        }
+  
+        // Update only the 'slots' field in Firestore
         await updateDoc(userDocRef, {
-          slots: [...existingSlots, newSlot],
+          slots: [...existingSlots, { unit: selectedUnit, timeSlot: timeSlot }],
         });
-
-        // Save selected timeslots to localStorage
-        localStorage.setItem("selectedTimeslots", JSON.stringify(newSelectedTimeslots));
-        
+  
+        // Update the selected timeslots in the state
+        setSelectedTimeslots((prevSelectedTimeslots) => ({
+          ...prevSelectedTimeslots,
+          [selectedUnit]: [...(prevSelectedTimeslots[selectedUnit] || []), timeSlot],
+        }));
+  
         console.log("Successfully added timeslot");
       }
     }
   };
+  
+  
 
   return (
     <div className="mx-4 bg-white dark:bg-slate-800 shadow-xl overflow-hidden">
@@ -106,6 +143,7 @@ const Select = () => {
                     : "hover:bg-gray-100"
                 } rounded-2xl float-right py-2 px-10 m-6`}
                 onClick={() => handleSelectButtonClick(timeSlot)}
+                disabled={selectedTimeslots[selectedUnit]?.includes(timeSlot)}
               >
                 {selectedTimeslots[selectedUnit]?.includes(timeSlot) ? "Selected" : "Select"}
               </button>
