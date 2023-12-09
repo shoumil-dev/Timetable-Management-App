@@ -1,38 +1,16 @@
-import { Inject, ScheduleComponent, Day, Week, WorkWeek, Month, Agenda, EventSettingsModel } from '@syncfusion/ej2-react-schedule';
-import { registerLicense } from '@syncfusion/ej2-base';
 import React, { useEffect, useState, useLayoutEffect } from "react";
 import { db } from "../firebase-handler";
 import { doc, collection, getDoc } from "firebase/firestore";
 import { auth } from "../firebase-handler";
-import { DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
-
+import { Inject, ScheduleComponent, Day, Week, WorkWeek, Month, Agenda } from '@syncfusion/ej2-react-schedule';
+import { registerLicense } from '@syncfusion/ej2-base';
 
 registerLicense('Ngo9BigBOggjHTQxAR8/V1NHaF1cWWhIYVZpR2Nbe05zfldCal9UVAciSV9jS31SdEVlWXxcdHdTRWdaUg==');
 
-const localData = {
-    dataSource: [
-        {
-            Subject: 'FIT3170 - Workshop',
-            EndTime: new Date(2023, 11, 7, 6, 30),
-            StartTime: new Date(2023, 11, 7, 4, 0),
-        },
-        {
-            Subject: 'FIT3077 - Tutor',
-            EndTime: new Date(2023, 11, 9, 16, 30),
-            StartTime: new Date(2023, 11, 9, 14, 0)
-        },
-        {
-            Subject: 'FIT3159 - Lecture',
-            EndTime: new Date(2023, 11, 5, 13, 30),
-            StartTime: new Date(2023, 11, 5, 11, 0)
-        },
-    ]
-}
-
 const Home = () => {
     const [selectedTimeslots, setSelectedTimeslots] = useState({});
-    let timeTableDataAllocated = [];
-    
+    const [timeTableDataAllocated, setTimeTableDataAllocated] = useState([]);
+
     useLayoutEffect(() => {
         const loadSelectedTimeslotsFromFirestore = async () => {
             const user = auth.currentUser;
@@ -52,7 +30,6 @@ const Home = () => {
                             const { unit, timeSlot } = slot;
                             selectedTimeslotsData[unit] = [...(selectedTimeslotsData[unit] || []), timeSlot];
                         });
-
                         setSelectedTimeslots(selectedTimeslotsData);
                     }
                 } catch (error) {
@@ -69,32 +46,57 @@ const Home = () => {
     }, [selectedTimeslots]);
 
     const processSelectedTimeslots = () => {
+        if (!selectedTimeslots || Object.keys(selectedTimeslots).length === 0) {
+            console.log("No selected timeslots found.");
+            return;
+        }
+        let convertedData = [];
         for (const unit in selectedTimeslots) {
             if (selectedTimeslots.hasOwnProperty(unit)) {
                 const timeSlots = selectedTimeslots[unit];
-                const convertedData = parseTimeSlots(timeSlots, unit);
-                timeTableDataAllocated = timeTableDataAllocated.concat(convertedData);
-                console.log(timeTableDataAllocated)
+                convertedData = [...convertedData, ...parseTimeSlots(timeSlots, unit)];
             }
         }
+        setTimeTableDataAllocated(convertedData);
+        console.log(convertedData);
     };
 
     const parseTimeSlots = (timeSlots, unit) => {
         return timeSlots.map((timeSlot) => {
-            const [subject, timeRange] = timeSlot.split(' ');
-            const [startTime, endTime] = timeRange.split(' - ');
-            const fullSubject = `${unit} - ${subject}`;
+            if (!timeSlot) {
+                console.error('Invalid time slot:', timeSlot);
+                return null; // Skip this iteration if timeSlot is invalid
+            }
 
-            const startDateTime = new Date(`2023-11-01 ${startTime}`);
-            const endDateTime = new Date(`2023-11-01 ${endTime}`);
+            // Split the time slot into day, subject, and time range
+            const [day, subject, ...rest] = timeSlot.split(' ');
+            const timeRange = rest.join(' ');
+
+            // Extract start and end times from the time range
+            const [startTime, endTime] = timeRange.split(' - ');
+
+            // Get the date based on the day of the week
+            const currentDate = new Date(`2023-11-01`);
+            const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const dayIndex = daysOfWeek.indexOf(day);
+            const startDateTime = new Date(currentDate);
+            startDateTime.setDate(currentDate.getDate() + (dayIndex - currentDate.getDay() + 7) % 7);
+            startDateTime.setHours(parseInt(startTime.split(':')[0], 10), parseInt(startTime.split(':')[1], 10), 0);
+
+            const endDateTime = new Date(startDateTime);
+            endDateTime.setHours(parseInt(endTime.split(':')[0], 10), parseInt(endTime.split(':')[1], 10), 0);
+
+            // Add recurrence rule
+            const recurrenceRule = `FREQ=WEEKLY; INTERVAL=1; BYDAY=${day.toUpperCase().substring(0, 2)};`;
 
             return {
-                Subject: fullSubject,
+                Subject: `${unit} - ${subject}`,
                 StartTime: startDateTime,
                 EndTime: endDateTime,
+                RecurrenceRule: recurrenceRule,
             };
-        });
-    };
+        }).filter(item => item !== null); // Remove null entries from the array
+    }
 
     return (
         <div>
@@ -111,9 +113,21 @@ const Home = () => {
                     </ul>
                 </nav>
             </div>
+            {/* <div>
+                {timeTableDataAllocated.map((event, index) => (
+                    <div key={index}>
+                        <p>{event.Subject}</p>
+                        <p>Start Time: {event.StartTime.toString()}</p>
+                        <p>End Time: {event.EndTime.toString()}</p>
+                        <p>Recurrence Rule: {event.RecurrenceRule}</p>
+                        <hr />
+                    </div>
+                ))}
+            </div> */}
             <ScheduleComponent eventSettings={{ dataSource: timeTableDataAllocated }}>
                 <Inject services={[Day, Week, WorkWeek, Month, Agenda]} />
             </ScheduleComponent>
+
         </div>
     );
 };
