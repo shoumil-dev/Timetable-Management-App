@@ -88,7 +88,8 @@ const Home = () => {
             const [startTime, endTime] = timeRange.split(' - ');
 
             // Get the date based on the day of the week
-            const currentDate = new Date(`2023-11-01`);
+            const currentDate = new Date();
+            currentDate.setMonth(currentDate.getMonth() - 1);
             const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             const dayIndex = daysOfWeek.indexOf(day);
             const startDateTime = new Date(currentDate);
