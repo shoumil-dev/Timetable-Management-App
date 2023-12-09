@@ -2,7 +2,7 @@ import React, { useEffect, useState, useLayoutEffect } from "react";
 import { db } from "../firebase-handler";
 import { doc, collection, getDoc } from "firebase/firestore";
 import { auth } from "../firebase-handler";
-import { Inject, ScheduleComponent, Day, Week, WorkWeek, Month, Agenda } from '@syncfusion/ej2-react-schedule';
+import { Inject, ScheduleComponent, Day, Week, WorkWeek, Month, Agenda, ViewDirective, ViewsDirective, TimelineViews, TimelineMonth } from '@syncfusion/ej2-react-schedule';
 import { registerLicense } from '@syncfusion/ej2-base';
 
 registerLicense('Ngo9BigBOggjHTQxAR8/V1NHaF1cWWhIYVZpR2Nbe05zfldCal9UVAciSV9jS31SdEVlWXxcdHdTRWdaUg==');
@@ -124,8 +124,15 @@ const Home = () => {
                     </div>
                 ))}
             </div> */}
-            <ScheduleComponent eventSettings={{ dataSource: timeTableDataAllocated }}>
-                <Inject services={[Day, Week, WorkWeek, Month, Agenda]} />
+            <ScheduleComponent eventSettings={{ dataSource: timeTableDataAllocated }} currentView="WorkWeek" height='730px'>
+                <ViewsDirective>
+                    <ViewDirective option='Day' startHour="08:00" endHour="21:00" interval={2} displayName="2 Days"></ViewDirective>
+                    <ViewDirective option='TimelineDay' startHour="08:00" endHour="21:00"></ViewDirective>
+                    <ViewDirective option='WorkWeek' isSelected={true} startHour="08:00" endHour="21:00" ></ViewDirective>
+                    <ViewDirective option='Month' startHour="08:00" endHour="21:00" showWeekNumber={true} showWeekend={false}></ViewDirective>
+                    <ViewDirective option='Agenda'></ViewDirective>
+                </ViewsDirective>
+                <Inject services={[Day, Week, WorkWeek, Month, Agenda, TimelineViews, TimelineMonth]} />
             </ScheduleComponent>
 
         </div>
