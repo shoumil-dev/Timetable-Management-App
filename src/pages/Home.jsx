@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useLayoutEffect } from "react";
 import { db } from "../firebase-handler";
+import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { doc, collection, getDoc } from "firebase/firestore";
 import { auth } from "../firebase-handler";
 import { Inject, ScheduleComponent, Day, Week, WorkWeek, Month, Agenda, ViewDirective, ViewsDirective, TimelineViews, TimelineMonth } from '@syncfusion/ej2-react-schedule';
@@ -11,7 +12,7 @@ const Home = () => {
     const [selectedTimeslots, setSelectedTimeslots] = useState({});
     const [timeTableDataAllocated, setTimeTableDataAllocated] = useState([]);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         const loadSelectedTimeslotsFromFirestore = async () => {
             const user = auth.currentUser;
 
@@ -106,7 +107,7 @@ const Home = () => {
                 </header>
                 <nav className="bg-black text-white p-4">
                     <ul className="flex space-x-4">
-                        <li><a href="http://localhost:3000/Home" className="hover:text-gray-400 bg-blue-500 text-white hover:bg-blue-600 p-4">Home</a></li>
+                        <li><Link to="/Home" className="hover:text-gray-400 bg-blue-500 text-white hover:bg-blue-600 p-4">Home</Link></li>
                         <li><a href="http://localhost:3000/Create" className="hover:text-gray-400">Create Unit</a></li>
                         <li><a href="http://localhost:3000/Select" className="hover:text-gray-400">Timeslot allocation</a></li>
                         <li className="ml-auto"><a href="http://localhost:3000/" className="hover:text-gray-400">Log Out</a></li>
