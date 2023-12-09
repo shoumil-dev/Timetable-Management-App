@@ -13,38 +13,49 @@ const Home = () => {
     const [timeTableDataAllocated, setTimeTableDataAllocated] = useState([]);
 
     useEffect(() => {
-        const loadSelectedTimeslotsFromFirestore = async () => {
-            const user = auth.currentUser;
-
+        const unsubscribe = auth.onAuthStateChanged((user) => {
             if (user && user.uid) {
-                const userId = user.uid;
-                const usersRef = collection(db, "users");
-                const userDocRef = doc(usersRef, userId);
-
-                try {
-                    const userDocSnapshot = await getDoc(userDocRef);
-
-                    if (userDocSnapshot.exists()) {
-                        const userSelectedTimeslots = userDocSnapshot.data().slots || [];
-                        const selectedTimeslotsData = {};
-                        userSelectedTimeslots.forEach((slot) => {
-                            const { unit, timeSlot } = slot;
-                            selectedTimeslotsData[unit] = [...(selectedTimeslotsData[unit] || []), timeSlot];
-                        });
-                        setSelectedTimeslots(selectedTimeslotsData);
-                    }
-                } catch (error) {
-                    console.error("Error loading selected timeslots:", error);
-                }
+                // The user is signed in, you can fetch data here if needed
+                loadSelectedTimeslotsFromFirestore(user.uid);
+            } else {
+                // The user is signed out
+                setSelectedTimeslots({});
+                setTimeTableDataAllocated([]);
             }
-        };
+        });
 
-        loadSelectedTimeslotsFromFirestore();
+        return () => {
+            // Cleanup the subscription when the component is unmounted
+            unsubscribe();
+        };
     }, []);
+
+
+    const loadSelectedTimeslotsFromFirestore = async (userId) => {
+        const usersRef = collection(db, "users");
+        const userDocRef = doc(usersRef, userId);
+
+        try {
+            const userDocSnapshot = await getDoc(userDocRef);
+
+            if (userDocSnapshot.exists()) {
+                const userSelectedTimeslots = userDocSnapshot.data().slots || [];
+                const selectedTimeslotsData = {};
+                userSelectedTimeslots.forEach((slot) => {
+                    const { unit, timeSlot } = slot;
+                    selectedTimeslotsData[unit] = [...(selectedTimeslotsData[unit] || []), timeSlot];
+                });
+                setSelectedTimeslots(selectedTimeslotsData);
+            }
+        } catch (error) {
+            console.error("Error loading selected timeslots:", error);
+        }
+    };
 
     useEffect(() => {
         processSelectedTimeslots();
     }, [selectedTimeslots]);
+
 
     const processSelectedTimeslots = () => {
         if (!selectedTimeslots || Object.keys(selectedTimeslots).length === 0) {
