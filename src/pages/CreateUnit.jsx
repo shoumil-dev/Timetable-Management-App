@@ -83,7 +83,7 @@ const CreateUnit = () => {
     };
 
     return(
-        <div class="mx-4 bg-white dark:bg-slate-800 shadow-xl overflow-hidden">
+        <div class="mx-4 bg-white shadow-xl overflow-hidden">
             <header className="bg-black text-white text-center font-serif text-3xl py-6 border-b border-white dark:border-slate-800">
                 Time Table Monash
             </header>
@@ -98,7 +98,7 @@ const CreateUnit = () => {
 
             <div className="flex h-screen">
                 <div className="overflow-auto ring-2 ring-gray-300 w-1/5 rounded-2xl text-xl mr-4 m-20 text-center">
-                    <div className="bg-gray-600 text-white p-8 hover:bg-blue-500 hover:text-white border-b-2">
+                    <div className="bg-gray-900 text-white p-8 hover:bg-blue-500 hover:text-white border-b-2">
                     <button onClick={() => handleAddUnitClick()}>+ Add Unit +</button>
                     </div>
                     
@@ -136,7 +136,7 @@ const CreateUnit = () => {
         
                 <div className="overflow-auto ring-2 ring-gray-300 w-4/5 rounded-2xl text-xl ml-4 m-20">
                     
-                    <div className="bg-gray-600 text-white flex hover:bg-blue-500 hover:text-white justify-between border-b-2">
+                    <div className="bg-gray-900 text-white flex hover:bg-blue-500 hover:text-white justify-between border-b-2">
                         <span className="m-8"><button onClick={() => handleAddTimeSlotClick()}>+ Add timeslot +</button></span> 
                     </div>
 
