@@ -2,6 +2,7 @@ import { auth } from "../firebase-handler";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { setDoc, doc, collection } from "firebase/firestore";
 import { db } from "../firebase-handler";
 
@@ -10,6 +11,7 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState(""); // Add status state for admin/lecturer/student
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const signUp = (e) => {
     e.preventDefault();
@@ -28,6 +30,11 @@ const SignUp = () => {
         });
 
         console.log("User signed up:", userCredential.user);
+        // Display a confirmation alert
+        alert("User successfully registered!");
+
+        // Navigate to the sign-in page
+        navigate("/SignIn");
       })
       .catch((error) => {
         console.error("Sign-up error:", error);
