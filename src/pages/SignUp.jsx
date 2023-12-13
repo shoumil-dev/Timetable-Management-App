@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { setDoc, doc, collection } from "firebase/firestore";
+import { toast, ToastContainer } from "react-toastify";
 import { db } from "../firebase-handler";
 
 const SignUp = () => {
@@ -13,33 +14,39 @@ const SignUp = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const signUp = (e) => {
+  const signUp = async (e) => {
     e.preventDefault();
 
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const userId = userCredential.user.uid;
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-        // Store user information in Firestore
-        const usersRef = collection(db, "users");
-        setDoc(doc(usersRef, userId), {
-          userId,
-          email,
-          status, // Include user status
-          slots: [],
-        });
+      const userId = userCredential.user.uid;
 
-        console.log("User signed up:", userCredential.user);
-        // Display a confirmation alert
-        alert("User successfully registered!");
-
-        // Navigate to the sign-in page
-        navigate("/SignIn");
-      })
-      .catch((error) => {
-        console.error("Sign-up error:", error);
-        setError(error.message);
+      const usersRef = collection(db, "users");
+      await setDoc(doc(usersRef, userId), {
+        userId,
+        email,
+        status,
+        slots: [],
       });
+
+      // Display a toast notification
+      toast.success("User successfully registered!", {
+        position: "top-center",
+        autoClose: 10000, // Close after 3000 milliseconds (3 seconds)
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+
+      // Navigate to the sign-in page
+      navigate("/");
+    } catch (error) {
+      console.error("Sign-up error:", error);
+      setError(error.message);
+    }
   };
 
   return (
@@ -130,6 +137,7 @@ const SignUp = () => {
             </button>
           </div>
         </form>
+        <ToastContainer />
       </div>
       <div className="text-sm text-center mt-4">
         <span>Already have an account?</span>{" "}
