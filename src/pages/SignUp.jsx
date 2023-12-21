@@ -121,7 +121,6 @@ const SignUp = () => {
               className="block w-full rounded-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-gray-900 sm:text-sm sm:leading-6"
             >
               <option value="">Select status</option>
-              <option value="admin">Admin</option>
               <option value="lecturer">Lecturer</option>
               <option value="student">Student</option>
             </select>
