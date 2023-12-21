@@ -4,8 +4,10 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { setDoc, doc, collection } from "firebase/firestore";
-import { toast, ToastContainer } from "react-toastify";
 import { db } from "../firebase-handler";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -26,7 +28,6 @@ const SignUp = () => {
       await setDoc(doc(usersRef, userId), {
         userId,
         email,
-        status,
         role: userRole,
       });
 

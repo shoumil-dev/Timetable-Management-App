@@ -5,6 +5,9 @@ import { doc, collection, getDoc } from "firebase/firestore";
 import { auth } from "../firebase-handler";
 import { Inject, ScheduleComponent, Day, Week, WorkWeek, Month, Agenda, ViewDirective, ViewsDirective, TimelineViews, TimelineMonth } from '@syncfusion/ej2-react-schedule';
 import { registerLicense } from '@syncfusion/ej2-base';
+import '@syncfusion/ej2-base/styles/bootstrap.css';
+import '@syncfusion/ej2-react-schedule/styles/material.css'; // or any other theme
+
 
 registerLicense('Ngo9BigBOggjHTQxAR8/V1NHaF1cWWhIYVZpR2Nbe05zfldCal9UVAciSV9jS31SdEVlWXxcdHdTRWdaUg==');
 
