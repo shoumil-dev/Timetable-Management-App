@@ -19,7 +19,7 @@ const SignUp = () => {
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-
+      const userRole = status === "lecturer" ? "lecturer" : "student";
       const userId = userCredential.user.uid;
 
       const usersRef = collection(db, "users");
@@ -27,7 +27,7 @@ const SignUp = () => {
         userId,
         email,
         status,
-        slots: [],
+        role: userRole,
       });
 
       // Display a toast notification
