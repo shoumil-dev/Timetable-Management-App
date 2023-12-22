@@ -47,7 +47,7 @@ const Select = () => {
     };
   
     loadSelectedTimeslotsFromFirestore();
-  }, []);
+  }, [selectedUnit]);
   
 
   const handleUnitClick = async (unit) => {
@@ -63,54 +63,43 @@ const Select = () => {
     if (selectedUnit && timeSlot) {
       const userId = auth.currentUser.uid;
       console.log("current user Id: " + userId);
-  
-      // Check if the selected time slot is already present in Firestore
+
       const usersRef = collection(db, "users");
       const userDocRef = doc(usersRef, userId);
       const userDocSnapshot = await getDoc(userDocRef);
-  
+
       if (userDocSnapshot.exists()) {
         const existingSlots = userDocSnapshot.data().slots || [];
         const isAlreadySelected = existingSlots.some(
           (slot) => slot.unit === selectedUnit && slot.timeSlot === timeSlot
         );
-  
-        // Display a confirmation window if the time slot is already selected
-        if (isAlreadySelected) {
-          window.alert(`You have already selected ${timeSlot} for ${selectedUnit}.`);
-          return; // Do not proceed with further actions
-        }
-  
-        // Confirmation dialog for selecting a new time slot
+
         const confirmed = window.confirm(
-          `You are about to select ${timeSlot} for ${selectedUnit}. Do you want to proceed?`
+          `You are about to ${isAlreadySelected ? 'deselect' : 'select'} ${timeSlot} for ${selectedUnit}. Do you want to proceed?`
         );
-  
+
         if (!confirmed) {
-          return; // Do nothing if the user cancels the confirmation
+          return;
         }
-  
-        // Update only the 'slots' field in Firestore
+
+        const updatedSlots = isAlreadySelected
+          ? existingSlots.filter((slot) => !(slot.unit === selectedUnit && slot.timeSlot === timeSlot))
+          : [...existingSlots, { unit: selectedUnit, timeSlot: timeSlot }];
+
         await updateDoc(userDocRef, {
-          slots: [...existingSlots, { unit: selectedUnit, timeSlot: timeSlot }],
+          slots: updatedSlots,
         });
-  
-        // Update the selected timeslots in the state
+
         setSelectedTimeslots((prevSelectedTimeslots) => ({
           ...prevSelectedTimeslots,
-          [selectedUnit]: [...(prevSelectedTimeslots[selectedUnit] || []), timeSlot],
+          [selectedUnit]: updatedSlots.map((slot) => slot.timeSlot),
         }));
-  
-        console.log("Successfully added timeslot");
+
+        console.log(`Successfully ${isAlreadySelected ? 'removed' : 'added'} timeslot`);
       }
     }
   };
   
-  
-  
-  
-  
-
   return (
     <div className="mx-4 bg-white shadow-xl overflow-hidden">
       <header className="bg-black text-white text-center font-serif text-3xl py-6 border-b border-white dark:border-slate-800">
@@ -140,24 +129,37 @@ const Select = () => {
         </div>
 
         <div className="overflow-auto ring-2 ring-gray-300 w-4/5 rounded-2xl text-xl ml-4 m-20">
-          {timeSlots.map((timeSlot, index) => (
-            <div key={index} className="flex justify-between border-b-2">
-              <span className="m-8">{timeSlot}</span>
+        {timeSlots.map((timeSlot, index) => (
+          <div key={index} className="flex justify-between border-b-2">
+            <span className="m-8">{timeSlot}</span>
+            {selectedTimeslots[selectedUnit]?.includes(timeSlot) ? (
+              <>
+                <button
+                  className="ring-2 ring-gray-300 bg-gray-400 text-gray-700 rounded-2xl float-right py-2 px-10 m-6"
+                  disabled
+                >
+                  Selected
+                </button>
+                <button
+                  className="ml-2 bg-red-500 text-white py-2 px-4 rounded-2xl"
+                  onClick={() => handleSelectButtonClick(timeSlot)}
+                >
+                  Deselect
+                </button>
+              </>
+            ) : (
               <button
-                className={`ring-2 ring-gray-300 ${
-                  selectedTimeslots[selectedUnit]?.includes(timeSlot)
-                    ? "bg-gray-400 text-gray-700"
-                    : "hover:bg-gray-100"
-                } rounded-2xl float-right py-2 px-10 m-6`}
+                className={`ring-2 ring-gray-300 hover:bg-gray-100 rounded-2xl float-right py-2 px-10 m-6`}
                 onClick={() => handleSelectButtonClick(timeSlot)}
                 disabled={selectedTimeslots[selectedUnit]?.includes(timeSlot)}
               >
-                {selectedTimeslots[selectedUnit]?.includes(timeSlot) ? "Selected" : "Select"}
+                Select
               </button>
-            </div>
-          ))}
-        </div>
+            )}
+          </div>
+        ))}
       </div>
+    </div>
     </div>
   );
 };
