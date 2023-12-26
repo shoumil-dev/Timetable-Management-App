@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { db } from "../firebase-handler";
 import { doc, collection, getDocs, updateDoc, getDoc } from "firebase/firestore";
 import { auth } from "../firebase-handler";
@@ -8,6 +8,7 @@ const Select = () => {
   const [selectedUnit, setSelectedUnit] = useState(null);
   const [timeSlots, setTimeSlots] = useState([]);
   const [selectedTimeslots, setSelectedTimeslots] = useState({});
+  const [editedTimeslots, setEditedTimeslots] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -18,7 +19,7 @@ const Select = () => {
       setUnits(unitData);
     };
     fetchData();
-  }, []);
+  }, [selectedUnit]);
 
   useEffect(() => {
     // Load user-specific selected timeslots from Firestore on component mount

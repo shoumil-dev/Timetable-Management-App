@@ -155,6 +155,31 @@ const CreateUnit = () => {
         }
       };
 
+      const handleRemoveTimeSlot = async (index) => {
+        try {
+          const updatedTimeSlots = [...timeSlots];
+          const removedTimeSlot = updatedTimeSlots.splice(index, 1)[0];
+    
+          const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
+    
+          await updateDoc(unitDocRef, { timeslot: updatedTimeSlots });
+    
+          // Fetch the updated data from Firestore and log it
+          const updatedData = await fetchUpdatedData();
+          console.log("Updated data from Firestore:", updatedData);
+    
+          setTimeSlots(updatedTimeSlots);
+          setSelectedUnit((prevUnit) => ({
+            ...prevUnit,
+            timeslot: updatedTimeSlots,
+          }));
+    
+          console.log("Removed timeslot:", removedTimeSlot);
+        } catch (error) {
+          console.error("Error updating document:", error);
+        }
+      };
+
       return (
         <div className="mx-4 bg-white shadow-xl overflow-hidden">
           <header className="bg-black text-white text-center font-serif text-3xl py-6 border-b border-white dark:border-slate-800">
@@ -239,11 +264,24 @@ const CreateUnit = () => {
               </div>
       
               {timeSlots.map((timeSlot, index) => (
-  <div key={index} className="flex justify-between border-b-2">
-    <span className="m-8">{timeSlot}</span>
-    <button onClick={() => handleEditTimeSlotClick(timeSlot, index)}>Edit</button>
-  </div>
-))}
+          <div key={index} className="flex justify-between border-b-2">
+            <span className="m-8">{timeSlot}</span>
+            <div className="flex items-center">
+              <button
+                className="bg-blue-500 text-white py-2 px-4 rounded-2xl m-6 hover:bg-blue-600"
+                onClick={() => handleEditTimeSlotClick(timeSlot, index)}
+              >
+                Edit
+              </button>
+              <button
+                className="bg-red-500 text-white py-2 px-4 rounded-2xl m-6 hover:bg-red-600"
+                onClick={() => handleRemoveTimeSlot(index)}
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        ))}
       
       {isAddTimeSlotModalOpen && (
   <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50" style={{pointerEvents: 'initial'}}>
