@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../firebase-handler";
 import { doc, addDoc, collection, getDocs, updateDoc, onSnapshot} from "firebase/firestore";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 
 const CreateUnit = () => {
@@ -84,35 +86,39 @@ const CreateUnit = () => {
 
     
         const handleEditTimeSlot = async () => {
-            if (selectedUnit && selectedUnit.id && editedTimeSlot.trim() !== "") {
+          if (selectedUnit && selectedUnit.id && editedTimeSlot.trim() !== "") {
               try {
-                const updatedTimeSlots = [...timeSlots];
-                updatedTimeSlots[editedTimeSlotIndex] = editedTimeSlot.trim();
-          
-                const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
-          
-                await updateDoc(unitDocRef, { timeslot: updatedTimeSlots });
-          
-                console.log("Updated timeSlots:", updatedTimeSlots);
-          
-                // Fetch the updated data from Firestore and log it
-                const updatedData = await fetchUpdatedData();
-                console.log("Updated data from Firestore:", updatedData);
-          
-                setTimeSlots(updatedTimeSlots);
-                setSelectedUnit((prevUnit) => ({
-                  ...prevUnit,
-                  timeslot: updatedTimeSlots,
-                }));
-          
-                setIsEditTimeSlotModalOpen(false);
-                setEditedTimeSlot("");
-                setEditedTimeSlotIndex(null);
+                  const updatedTimeSlots = [...timeSlots];
+                  updatedTimeSlots[editedTimeSlotIndex] = editedTimeSlot.trim();
+      
+                  const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
+      
+                  await updateDoc(unitDocRef, { timeslot: updatedTimeSlots });
+      
+                  // Show success notification
+                  toast.success("Timeslot has been edited successfully!");
+      
+                  // Fetch the updated data from Firestore and log it
+                  const updatedData = await fetchUpdatedData();
+                  console.log("Updated data from Firestore:", updatedData);
+      
+                  setTimeSlots(updatedTimeSlots);
+                  setSelectedUnit((prevUnit) => ({
+                      ...prevUnit,
+                      timeslot: updatedTimeSlots,
+                  }));
+      
+                  setIsEditTimeSlotModalOpen(false);
+                  setEditedTimeSlot("");
+                  setEditedTimeSlotIndex(null);
               } catch (error) {
-                console.error("Error updating document:", error);
+                  console.error("Error updating document:", error);
+                  // Show error notification
+                  toast.error("Error updating timeslot. Please try again.");
               }
-            }
-          };
+          }
+      };
+      
 
           const fetchUpdatedData = async () => {
             const unitsCollection = collection(db, "units");
@@ -327,6 +333,7 @@ const CreateUnit = () => {
 )}
             </div>
           </div>
+          <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick pauseOnFocusLoss draggable pauseOnHover />
         </div>
       );
     };
