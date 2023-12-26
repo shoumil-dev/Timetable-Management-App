@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../firebase-handler";
-import { doc, addDoc, collection, getDocs, updateDoc, getDoc, documentId } from "firebase/firestore";
+import { doc, addDoc, collection, getDocs, updateDoc, onSnapshot} from "firebase/firestore";
 
 
 const CreateUnit = () => {
@@ -26,10 +26,18 @@ const CreateUnit = () => {
             title: newUnit.trim(),
             timeslot: [],
           };
-    
-          const unitRef = await addDoc(collection(db, "units"), unitData);
-          setUnits([...units, { ...unitData, id: unitRef.id }]);
-          setIsAddUnitModalOpen(false);
+      
+          try {
+            const unitRef = await addDoc(collection(db, "units"), unitData);
+            setUnits([...units, { ...unitData, id: unitRef.id }]);
+            setIsAddUnitModalOpen(false);
+            
+            // Fetch the updated data from Firestore and update the state
+            const updatedData = await fetchUpdatedData();
+            setUnits(updatedData);
+          } catch (error) {
+            console.error("Error adding unit:", error);
+          }
         }
       };
     
@@ -40,24 +48,25 @@ const CreateUnit = () => {
     
       const handleAddTimeSlot = async () => {
         if (selectedUnit && selectedUnit.id && newTimeSlot.trim() !== "") {
-          let updatedTimeSlots = [];
-      
-          if (selectedUnit.timeslot) {
-            updatedTimeSlots = [...selectedUnit.timeslot];
-          }
-      
-          updatedTimeSlots.push(newTimeSlot.trim());
-      
-          const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
-      
           try {
+            const updatedTimeSlots = [...timeSlots, newTimeSlot.trim()];
+      
+            const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
+      
             await updateDoc(unitDocRef, { timeslot: updatedTimeSlots });
-            // Update both state variables
+      
+            console.log("Updated timeSlots:", updatedTimeSlots);
+      
+            // Fetch the updated data from Firestore and log it
+            const updatedData = await fetchUpdatedData();
+            console.log("Updated data from Firestore:", updatedData);
+      
             setTimeSlots(updatedTimeSlots);
             setSelectedUnit((prevUnit) => ({
               ...prevUnit,
               timeslot: updatedTimeSlots,
             }));
+      
             setIsAddTimeSlotModalOpen(false);
           } catch (error) {
             console.error("Error updating document:", error);
@@ -76,19 +85,26 @@ const CreateUnit = () => {
     
         const handleEditTimeSlot = async () => {
             if (selectedUnit && selectedUnit.id && editedTimeSlot.trim() !== "") {
-              const updatedTimeSlots = [...timeSlots];
-              updatedTimeSlots[editedTimeSlotIndex] = editedTimeSlot.trim();
-          
-              const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
-          
               try {
+                const updatedTimeSlots = [...timeSlots];
+                updatedTimeSlots[editedTimeSlotIndex] = editedTimeSlot.trim();
+          
+                const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
+          
                 await updateDoc(unitDocRef, { timeslot: updatedTimeSlots });
-                // Update both state variables
+          
+                console.log("Updated timeSlots:", updatedTimeSlots);
+          
+                // Fetch the updated data from Firestore and log it
+                const updatedData = await fetchUpdatedData();
+                console.log("Updated data from Firestore:", updatedData);
+          
                 setTimeSlots(updatedTimeSlots);
                 setSelectedUnit((prevUnit) => ({
                   ...prevUnit,
                   timeslot: updatedTimeSlots,
                 }));
+          
                 setIsEditTimeSlotModalOpen(false);
                 setEditedTimeSlot("");
                 setEditedTimeSlotIndex(null);
@@ -97,19 +113,38 @@ const CreateUnit = () => {
               }
             }
           };
+
+          const fetchUpdatedData = async () => {
+            const unitsCollection = collection(db, "units");
+            const snapshot = await getDocs(unitsCollection);
+            return snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+          };
           
           
     
-      useEffect(() => {
-        const fetchData = async () => {
-          const unitsCollection = collection(db, "units");
-          const snapshot = await getDocs(unitsCollection);
-    
-          const unitData = snapshot.docs.map((doc) => doc.data());
-          setUnits(unitData);
-        };
-        fetchData();
-      }, []);
+          useEffect(() => {
+            const fetchData = async () => {
+              const unitsCollection = collection(db, "units");
+              
+              // Use onSnapshot to listen for real-time updates
+              const unsubscribe = onSnapshot(unitsCollection, (snapshot) => {
+                const unitData = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+                
+                setUnits(unitData);
+          
+                if (unitData.length > 0) {
+                  const initialUnit = unitData[0];
+                  setSelectedUnit(initialUnit);
+                  setTimeSlots(initialUnit.timeslot || []);
+                }
+              });
+          
+              return () => unsubscribe(); // Cleanup the listener when the component unmounts
+            };
+          
+            fetchData();
+          }, []);
+          
     
       const handleUnitClick = async (unit) => {
         const unitDoc = units.find((u) => u.title === unit);
