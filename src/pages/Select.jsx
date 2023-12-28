@@ -8,7 +8,6 @@ const Select = () => {
   const [selectedUnit, setSelectedUnit] = useState(null);
   const [timeSlots, setTimeSlots] = useState([]);
   const [selectedTimeslots, setSelectedTimeslots] = useState({});
-  const [editedTimeslots, setEditedTimeslots] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {

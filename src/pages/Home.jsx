@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useLayoutEffect } from "react";
+import React, { useEffect, useState} from "react";
 import { db } from "../firebase-handler";
-import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { doc, collection, getDoc } from "firebase/firestore";
 import { auth } from "../firebase-handler";
 import { Inject, ScheduleComponent, Day, Week, WorkWeek, Month, Agenda, ViewDirective, ViewsDirective, TimelineViews, TimelineMonth } from '@syncfusion/ej2-react-schedule';
