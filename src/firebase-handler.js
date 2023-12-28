@@ -1,4 +1,5 @@
 import { initializeApp } from "firebase/app";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { initializeAuth, browserLocalPersistence } from 'firebase/auth';
 

@@ -10,7 +10,7 @@ import '@syncfusion/ej2-react-schedule/styles/material.css'; // or any other the
 import Notification from './Notification';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell } from '@fortawesome/free-solid-svg-icons';
+import { faBell, faUser } from '@fortawesome/free-solid-svg-icons';
 
 
 registerLicense('Ngo9BigBOggjHTQxAR8/V1NHaF1cWWhIYVZpR2Nbe05zfldCal9UVAciSV9jS31SdEVlWXxcdHdTRWdaUg==');
@@ -135,14 +135,12 @@ const Home = () => {
                 </header>
                 <nav className="bg-black text-white p-4">
                     <ul className="flex space-x-4">
+                        <li><a href="http://localhost:3000/User" className="hover:text-gray-400"><FontAwesomeIcon icon={faUser} /></a></li>
                         <li><Link to="/Home" className="hover:text-gray-400 bg-blue-500 text-white hover:bg-blue-600 p-4">Home</Link></li>
                         <li><a href="http://localhost:3000/Create" className="hover:text-gray-400">Create Unit</a></li>
                         <li><a href="http://localhost:3000/Select" className="hover:text-gray-400">Timeslot allocation</a></li>
                         <li className="ml-auto"><a href="http://localhost:3000/" className="hover:text-gray-400">Log Out</a></li>
-                        <li>
-                            <button onClick={handleNotificationButtonClick}>
-                            <FontAwesomeIcon icon={faBell} />
-                            </button>
+                        <li><button onClick={handleNotificationButtonClick}><FontAwesomeIcon icon={faBell} /></button>
                             {showNotification && (
                             <Notification
                                 notifications={[
