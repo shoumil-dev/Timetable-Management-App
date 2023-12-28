@@ -1,16 +1,56 @@
 /* Notification.css */
 
-.notification-modal {
+.notification-content {
+    background-color: black; /* Set the background color to black */
+    padding: 16px; /* Adjust padding as needed */
+  }
+  
+  .notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    position: sticky;
+    top: 0;
+    background-color: black;
+    color: white;
+    z-index: 1; /* Ensure the header stays above the scrolling content */
+    padding: 10px; /* Adjust padding as needed */
+  }
+  
+  .notification-header h3 {
+    font-size: 24px; /* Set the font size for the header words */
+    margin: 0; /* Remove default margin for h3 */
+  }
+  
+  .notification-header button {
+    font-size: 22px; /* Set the font size for the close button */
+    color: white; /* Ensure button text is visible against the black background */
+    background: none; /* Remove button background */
+    border: none; /* Remove button border */
+    cursor: pointer; /* Set cursor to pointer for better UX */
+  }
+  
+  .notification-box {
+    background-color: #fff; /* Customize the background color for each notification box */
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    color: black;
+  }
+  
+  .notification-modal {
     display: none;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: white;
-    border: 1px solid #ccc;
-    padding: 16px;
+    border: 2px solid black; /* Add border style */
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000; /* Ensure the notification appears above other elements */
+    overflow-y: auto; /* Enable vertical scrollbar when content exceeds the height */
+    max-height: 80vh;
+    margin-bottom: 20px; /* Adjust the bottom margin as needed */
   }
   
   .notification-modal.open {

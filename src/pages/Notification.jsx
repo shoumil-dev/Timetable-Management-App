@@ -35,11 +35,13 @@ const Notification = ({ notifications, onClose }) => {
         </div>
         <div className="notification-body">
           {notifications.length > 0 ? (
-            <ul>
+            <div>
               {notifications.map((notification, index) => (
-                <li key={index}>{notification}</li>
+                <div key={index} className="notification-box">
+                  {notification}
+                </div>
               ))}
-            </ul>
+            </div>
           ) : (
             <p>No notifications</p>
           )}
