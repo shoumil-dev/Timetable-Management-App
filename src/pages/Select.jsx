@@ -111,6 +111,18 @@ const Select = () => {
   
       if (userDocSnapshot.exists()) {
         const existingSlots = userDocSnapshot.data().slots || [];
+        const isAlreadySelected = existingSlots.some(
+          (slot) => slot.unit === selectedUnit && slot.timeSlot === timeSlot
+        );
+  
+        const confirmed = window.confirm(
+          `You are about to ${isAlreadySelected ? "deselect" : "select"} ${timeSlot} for ${selectedUnit}. Do you want to proceed?`
+        );
+  
+        if (!confirmed) {
+          return;
+        }
+  
         const updatedSlots = existingSlots.filter(
           (slot) => !(slot.unit === selectedUnit && slot.timeSlot === timeSlot)
         );
@@ -124,10 +136,11 @@ const Select = () => {
           [selectedUnit]: updatedSlots.map((slot) => slot.timeSlot),
         }));
   
-        console.log(`Successfully removed timeslot`);
+        console.log(`Successfully ${isAlreadySelected ? "removed" : "added"} timeslot`);
       }
     }
   };
+  
   
   return (
     <div className="mx-4 bg-white shadow-xl overflow-hidden">
