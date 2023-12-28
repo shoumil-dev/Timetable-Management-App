@@ -196,26 +196,26 @@ const Select = () => {
     <div key={index} className="flex justify-between border-b-2">
       <span className="m-8">{timeSlot}</span>
       <div className="flex items-center">
-        <button
-          className={`ring-2 ring-gray-300 ${
-            selectedTimeslots[selectedUnit]?.includes(timeSlot)
-              ? "bg-gray-400 text-gray-700"
-              : "hover:bg-gray-100"
-          } rounded-2xl py-2 px-10 m-6`}
-          onClick={() => handleSelectButtonClick(timeSlot)}
-          disabled={selectedTimeslots[selectedUnit]?.includes(timeSlot)}
-        >
-          {selectedTimeslots[selectedUnit]?.includes(timeSlot) ? "Selected" : "Select"}
-        </button>
+      <button
+  className={`ring-2 ring-gray-300 ${
+    selectedTimeslots[selectedUnit]?.includes(timeSlot)
+      ? "bg-gray-700 text-white"
+      : "hover:bg-gray-100"
+  } rounded-full py-2 px-6 m-2 transition duration-300`}
+  onClick={() => handleSelectButtonClick(timeSlot)}
+  disabled={selectedTimeslots[selectedUnit]?.includes(timeSlot)}
+>
+  {selectedTimeslots[selectedUnit]?.includes(timeSlot) ? "Selected" : "Select"}
+</button>
 
-        {selectedTimeslots[selectedUnit]?.includes(timeSlot) && (
-          <button
-            className="ml-2 bg-red-500 text-white py-2 px-4 rounded-2xl"
-            onClick={() => handleDeselectButtonClick(timeSlot)}
-          >
-            Deselect
-          </button>
-        )}
+{selectedTimeslots[selectedUnit]?.includes(timeSlot) && (
+  <button
+    className="ml-2 mr-2 bg-red-500 text-white rounded-full py-2 px-4 hover:bg-red-600 transition duration-300"
+    onClick={() => handleDeselectButtonClick(timeSlot)}
+  >
+    Deselect
+  </button>
+)}
       </div>
     </div>
   ))}
