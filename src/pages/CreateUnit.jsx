@@ -229,7 +229,7 @@ const CreateUnit = () => {
                 <div
                   key={unit.title}
                   className={`p-8 hover:bg-black hover:text-white border-b-2 ${
-                    selectedUnit === unit.title ? "bg-black text-white" : ""
+                    selectedUnit?.title === unit.title ? "bg-black text-white" : ""
                   }`}
                 >
                   <button onClick={() => handleUnitClick(unit.title)}>
