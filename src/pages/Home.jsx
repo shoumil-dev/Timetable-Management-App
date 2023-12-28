@@ -7,6 +7,10 @@ import { Inject, ScheduleComponent, Day, Week, WorkWeek, Month, Agenda, ViewDire
 import { registerLicense } from '@syncfusion/ej2-base';
 import '@syncfusion/ej2-base/styles/bootstrap.css';
 import '@syncfusion/ej2-react-schedule/styles/material.css'; // or any other theme
+import Notification from './Notification';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBell } from '@fortawesome/free-solid-svg-icons';
 
 
 registerLicense('Ngo9BigBOggjHTQxAR8/V1NHaF1cWWhIYVZpR2Nbe05zfldCal9UVAciSV9jS31SdEVlWXxcdHdTRWdaUg==');
@@ -14,6 +18,15 @@ registerLicense('Ngo9BigBOggjHTQxAR8/V1NHaF1cWWhIYVZpR2Nbe05zfldCal9UVAciSV9jS31
 const Home = () => {
     const [selectedTimeslots, setSelectedTimeslots] = useState({});
     const [timeTableDataAllocated, setTimeTableDataAllocated] = useState([]);
+    const [showNotification, setShowNotification] = useState(false);
+
+    const handleNotificationButtonClick = () => {
+        setShowNotification(true);
+    };
+
+    const handleNotificationClose = () => {
+        setShowNotification(false);
+      };
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -126,6 +139,22 @@ const Home = () => {
                         <li><a href="http://localhost:3000/Create" className="hover:text-gray-400">Create Unit</a></li>
                         <li><a href="http://localhost:3000/Select" className="hover:text-gray-400">Timeslot allocation</a></li>
                         <li className="ml-auto"><a href="http://localhost:3000/" className="hover:text-gray-400">Log Out</a></li>
+                        <li>
+                            <button onClick={handleNotificationButtonClick}>
+                            <FontAwesomeIcon icon={faBell} />
+                            </button>
+                            {showNotification && (
+                            <Notification
+                                notifications={[
+                                'FIT2004 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
+                                'FIT2004 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
+                                'FIT2004 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
+                                'FIT2004 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
+                                ]}
+                                onClose={handleNotificationClose}
+                            />
+                            )}
+                        </li>
                     </ul>
                 </nav>
             </div>
