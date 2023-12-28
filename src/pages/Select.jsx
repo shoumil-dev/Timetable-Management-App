@@ -100,6 +100,34 @@ const Select = () => {
       }
     }
   };
+
+  const handleDeselectButtonClick = async (timeSlot) => {
+    if (selectedUnit && timeSlot) {
+      const userId = auth.currentUser.uid;
+  
+      const usersRef = collection(db, "users");
+      const userDocRef = doc(usersRef, userId);
+      const userDocSnapshot = await getDoc(userDocRef);
+  
+      if (userDocSnapshot.exists()) {
+        const existingSlots = userDocSnapshot.data().slots || [];
+        const updatedSlots = existingSlots.filter(
+          (slot) => !(slot.unit === selectedUnit && slot.timeSlot === timeSlot)
+        );
+  
+        await updateDoc(userDocRef, {
+          slots: updatedSlots,
+        });
+  
+        setSelectedTimeslots((prevSelectedTimeslots) => ({
+          ...prevSelectedTimeslots,
+          [selectedUnit]: updatedSlots.map((slot) => slot.timeSlot),
+        }));
+  
+        console.log(`Successfully removed timeslot`);
+      }
+    }
+  };
   
   return (
     <div className="mx-4 bg-white shadow-xl overflow-hidden">
@@ -151,33 +179,34 @@ const Select = () => {
         </div>
 
         <div className="overflow-auto ring-2 ring-gray-300 w-4/5 rounded-2xl text-xl ml-4 m-20">
-          {timeSlots.map((timeSlot, index) => (
-            <div key={index} className="flex justify-between border-b-2">
-              <span className="m-8">{timeSlot}</span>
-              <div className="flex items-center">
-                <button
-                  className={`ring-2 ring-gray-300 ${
-                    selectedTimeslots[selectedUnit]?.includes(timeSlot)
-                      ? "bg-gray-400 text-gray-700"
-                      : "hover:bg-gray-100"
-                  } rounded-2xl py-2 px-10 m-6`}
-                  onClick={() => handleSelectButtonClick(timeSlot)}
-                  disabled={selectedTimeslots[selectedUnit]?.includes(timeSlot)}
-                >
-                  {selectedTimeslots[selectedUnit]?.includes(timeSlot) ? "Selected" : "Select"}
-                  {selectedTimeslots[selectedUnit]?.includes(timeSlot) && (
-                    <button
-                      className="ml-2 bg-red-500 text-white py-2 px-4 rounded-2xl"
-                      onClick={() => handleSelectButtonClick(timeSlot)}
-                    >
-                      Deselect
-                    </button>
-                  )}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+  {timeSlots.map((timeSlot, index) => (
+    <div key={index} className="flex justify-between border-b-2">
+      <span className="m-8">{timeSlot}</span>
+      <div className="flex items-center">
+        <button
+          className={`ring-2 ring-gray-300 ${
+            selectedTimeslots[selectedUnit]?.includes(timeSlot)
+              ? "bg-gray-400 text-gray-700"
+              : "hover:bg-gray-100"
+          } rounded-2xl py-2 px-10 m-6`}
+          onClick={() => handleSelectButtonClick(timeSlot)}
+          disabled={selectedTimeslots[selectedUnit]?.includes(timeSlot)}
+        >
+          {selectedTimeslots[selectedUnit]?.includes(timeSlot) ? "Selected" : "Select"}
+        </button>
+
+        {selectedTimeslots[selectedUnit]?.includes(timeSlot) && (
+          <button
+            className="ml-2 bg-red-500 text-white py-2 px-4 rounded-2xl"
+            onClick={() => handleDeselectButtonClick(timeSlot)}
+          >
+            Deselect
+          </button>
+        )}
+      </div>
+    </div>
+  ))}
+</div>
       </div>
     </div>
   );
