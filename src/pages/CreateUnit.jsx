@@ -4,6 +4,9 @@ import { doc, addDoc, collection, getDocs, updateDoc, onSnapshot} from "firebase
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBell, faUser } from '@fortawesome/free-solid-svg-icons';
+
 
 const CreateUnit = () => {
     const [units, setUnits] = useState([]);
@@ -187,12 +190,13 @@ const CreateUnit = () => {
       };
 
       return (
-        <div className="mx-4 bg-white shadow-xl overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 shadow-xl overflow-hidden">
           <header className="bg-black text-white text-center font-serif text-3xl py-6 border-b border-white dark:border-slate-800">
             Time Table Monash
           </header>
           <nav className="bg-black text-white p-4">
             <ul className="flex space-x-4">
+              <li><a href="http://localhost:3000/User" className="hover:text-gray-400"><FontAwesomeIcon icon={faUser} /></a></li>
               <li>
                 <a href="http://localhost:3000/Home" className="hover:text-gray-400">
                   Home

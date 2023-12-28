@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../firebase-handler";
 import { Link } from 'react-router-dom';
-import { doc, collection, getDoc } from "firebase/firestore";
+import { doc, collection, getDoc, setDoc } from "firebase/firestore";
 import { auth } from "../firebase-handler";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faBuilding, faCogs, faFlag, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faUserEdit } from '@fortawesome/free-solid-svg-icons';
 
 const UserPage = () => {
   const [userDetails, setUserDetails] = useState(null);
+  const [nameInput, setNameInput] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -27,60 +29,116 @@ const UserPage = () => {
     fetchUserDetails();
   }, []);
 
+  const handleNameSubmit = async () => {
+    try {
+      const userDocRef = doc(collection(db, "users"), auth.currentUser.uid);
+      await setDoc(userDocRef, { name: nameInput }, { merge: true });
+
+      setUserDetails({ ...userDetails, name: nameInput });
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error updating user name:", error);
+    }
+  };
+
+  const handleRemoveSlot = async (index) => {
+    try {
+      const updatedSlots = [...userDetails.slots];
+      updatedSlots.splice(index, 1);
+
+      const userDocRef = doc(collection(db, "users"), auth.currentUser.uid);
+      await setDoc(userDocRef, { slots: updatedSlots }, { merge: true });
+
+      setUserDetails({ ...userDetails, slots: updatedSlots });
+    } catch (error) {
+      console.error("Error removing time slot:", error);
+    }
+  };
+
   return (
-    <div>
-      <div className="bg-white dark:bg-slate-800 shadow-xl overflow-hidden">
-        <header className="bg-black text-white text-center font-serif text-3xl py-6 border-b border-white dark:border-slate-800">
-          Time Table Monash
-        </header>
-        <nav className="bg-black text-white p-4">
-          <ul className="flex space-x-4">
-            <li><Link to="/Home" className="hover:text-gray-400 bg-blue-500 text-white hover:bg-blue-600 p-4"><FontAwesomeIcon icon={faUser} /></Link></li>
-            <li><a href="http://localhost:3000/Home" className="hover:text-gray-400">Home</a></li>
-            <li><a href="http://localhost:3000/Create" className="hover:text-gray-400">Create Unit</a></li>
-            <li><a href="http://localhost:3000/Select" className="hover:text-gray-400">Timeslot allocation</a></li>
-            <li className="ml-auto"><a href="http://localhost:3000/" className="hover:text-gray-400">Log Out</a></li>
-          </ul>
-        </nav>
-      </div>
+    <div className="bg-white dark:bg-slate-800 shadow-xl overflow-hidden">
+      <header className="bg-black text-white text-center font-serif text-3xl py-6 border-b border-white dark:border-slate-800">
+        Time Table Monash
+      </header>
+      <nav className="bg-black text-white p-4">
+        <ul className="flex space-x-4">
+          <li>
+            <Link to="/Home" className="hover:text-gray-400 bg-blue-500 text-white hover:bg-blue-600 p-4">
+              <FontAwesomeIcon icon={faUserEdit} />
+            </Link>
+          </li>
+          <li><Link to="/Home" className="hover:text-gray-400">Home</Link></li>
+          <li><Link to="/Create" className="hover:text-gray-400">Create Unit</Link></li>
+          <li><Link to="/Select" className="hover:text-gray-400">Timeslot Allocation</Link></li>
+          <li className="ml-auto"><Link to="/" className="hover:text-gray-400">Log Out</Link></li>
+        </ul>
+      </nav>
 
       <div className="m-4">
-        <h2 className="text-2xl font-bold mb-4">User Details</h2>
+        <h2 className="text-3xl font-bold mb-4">User Details</h2>
         {userDetails ? (
-          <div>
-            <table className="table-auto w-full">
-              <tbody>
-                <tr>
-                  <td className="font-semibold">Name:</td>
-                  <td>{userDetails.displayName}</td>
-                </tr>
-                <tr>
-                  <td className="font-semibold">Email:</td>
-                  <td>{userDetails.email}</td>
-                </tr>
-                <tr>
-                  <td className="font-semibold">Id:</td>
-                  <td>{userDetails.userId}</td>
-                </tr>
-                {userDetails.slots && userDetails.slots.length > 0 && (
-                  <tr>
-                    <td className="font-semibold">Class Slots:</td>
-                    <td>
-                      <ul>
-                        {userDetails.slots.map((slot, index) => (
-                          <li key={index}>{slot.unit} - {slot.timeSlot}</li>
-                        ))}
-                      </ul>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-gray-700 font-bold text-lg">Name:</div>
+            <div className="flex items-center">
+              {isEditing ? (
+                <div>
+                  <input
+                    type="text"
+                    className="border-2 border-gray-500 rounded-md p-2 text-lg"
+                    value={nameInput}
+                    onChange={(e) => setNameInput(e.target.value)}
+                  />
+                  <button
+                    onClick={handleNameSubmit}
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded ml-2"
+                  >
+                    Save
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center">
+                  <p className="text-gray-600 text-lg">{userDetails.name || "Name not set"}</p>
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded ml-2"
+                  >
+                    {userDetails.name ? "Edit" : "Add"}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="text-gray-700 font-bold text-lg">Email:</div>
+            <div className="text-gray-600 text-lg">{userDetails.email}</div>
+
+            <div className="text-gray-700 font-bold text-lg">Id:</div>
+            <div className="text-gray-600 text-lg">{userDetails.userId}</div>
+
+            <div className="text-gray-700 font-bold text-lg">Class slots:</div>
+            <div className="text-gray-600 text-lg">
+              {userDetails.slots && userDetails.slots.length > 0 ? (
+                <ul>
+                  {userDetails.slots.map((slot, index) => (
+                    <li key={index} className="flex items-center justify-between">
+                      <div>{slot.unit} - {slot.timeSlot}</div>
+                      <button
+                        onClick={() => handleRemoveSlot(index)}
+                        className="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-2 rounded text-sm ml-2"
+                      >
+                        Remove
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No time slots allocated.</p>
+              )}
+            </div>
           </div>
         ) : (
           <p>Loading user details...</p>
         )}
-      </div>
+      </div> 
     </div>
   );
 };
