@@ -1,9 +1,9 @@
-# Timetable Management App Handover Documentation
+# Timetable Management App Handover Documentation 📅
 This document helps with the handover of the application development resources from the development team to the maintenance team.
 ## Overview and Purpose
 The Timetable Management App is a web-based application developed with inspiration from Monash University's Allocate+ system. Its purpose is to provide an efficient and user-friendly platform for managing schedules and timetables.
 
-## Software and Hardware Requirements
+## Software and Hardware Requirements 🖥️
 Any computer that was made in the last 10 years should be able to run this application. Since it is a web app, it is compatible with any modern browser running on any operating system.
 
 ### Prerequisites
@@ -11,7 +11,7 @@ Any computer that was made in the last 10 years should be able to run this appli
 - Firebase libraries
 - Web browser (compatible with the latest web standards)
 
-### Installation and Instructions to Run
+### Installation and Instructions to Run 🚀
 
 1. Clone the Repository:
    ```bash
@@ -30,7 +30,7 @@ Any computer that was made in the last 10 years should be able to run this appli
 
    The application will be accessible at [http://localhost:3000](http://localhost:3000) in your browser.
 
-### Configuration
+### Configuration ⚙️
 
 1. Firebase Credentials:
    - Open `firebase-handler.js` and update the Firebase credentials. The current credentials are already linked to the Firebase project. Change it only if you're migrating to another Firebase project.
@@ -38,7 +38,7 @@ Any computer that was made in the last 10 years should be able to run this appli
 2. Additional Configuration:
    - Tailwind has already been preconfigured and doesn't require any further configuration as of now. If required, you can modify the `tailwind.config.js` file in the root directory.
 
-### Firestore Filesystem Structure
+### Firestore Filesystem Structure 🗃️
 We use Firebase's Firestore database for storage, reading and writing of data. However, to access and interact with this database, some knowledge of the filesystem structure is required beforehand.
 
 Each unit is stored in the **units** *collection* as a *document*. Inside each unit, there are two *fields*. These are the **timeslot** array and the **title**.
@@ -73,31 +73,31 @@ Therefore, the structure of the firestore filesystem is as follows.
 
 **Note: The userIDs are auto-generated.**
 
-### Testing
-Explain how to run tests for the application, including details on testing frameworks and sample test cases.
+### Testing 🧪
+To test the web application, you can use testing frameworks like Jest and the React Testing Library. You can then run `npm test` to execute tests. Currently, there are no tests written. Everything has been tested manually.
 
-### Troubleshooting
+### Troubleshooting ⚠️
 - Dependency Errors in React: A common issue during development is that developers forget to `npm install` before running the application and after pulling.
 
-### Security Considerations
+### Security Considerations 🔐
 For security, we rely on Google's Firebase encryption. The only way to gain access to the database is to access it using a developer's Google account. However, all Google accounts come with two-factor authentication now, making unauthorised access extremely difficult.
 
-### Future Roadmap
+### Future Roadmap 🚀
 Share plans for future development, upcoming features, improvements, or known limitations to be addressed in future releases.
 
 For future releases, our roadmap suggests implementing the following features:
-- Dark mode
-- Profile pictures for users
-- Sounds when interacting with elements
+- Dark mode 🌙
+- Profile pictures for users 📸
+- Sounds when interacting with elements 🔊
 
 Our limitations at the moment are:
 - The application cannot show the classroom for the allocated timeslot
 - Our application does not account for clashes, both slots are shown allocated together
 
-### Licensing
+### Licensing 📄
 The Timetable Management App is distributed under the MIT license. Refer to the LICENSE file for details.
 
-### Contact Information
+### Contact Information 📧
 For inquiries or support, contact the original project team:
 - [Mikhail](mailto:mhar0027@student.monash.edu)
 - [Shoumil](mailto:sguh0003@student.monash.edu)
