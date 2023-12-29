@@ -1,9 +1,10 @@
 # Timetable Management App Handover Documentation
-
+This document helps with the handover of the application development resources from the development team to the maintenance team.
 ## Overview and Purpose
 The Timetable Management App is a web-based application developed with inspiration from Monash University's Allocate+ system. Its purpose is to provide an efficient and user-friendly platform for managing schedules and timetables.
 
 ## Software and Hardware Requirements
+Any computer that was made in the last 10 years should be able to run this application. Since it is a web app, it is compatible with any modern browser running on any operating system.
 
 ### Prerequisites
 - Node.js (latest version)
@@ -40,8 +41,37 @@ The Timetable Management App is a web-based application developed with inspirati
 ### Firestore Filesystem Structure
 We use Firebase's Firestore database for storage, reading and writing of data. However, to access and interact with this database, some knowledge of the filesystem structure is required beforehand.
 
-### Deployment
-Provide instructions on deploying the application in a production environment, including steps for configuring a production build and setting up a production database.
+Each unit is stored in the **units** *collection* as a *document*. Inside each unit, there are two *fields*. These are the **timeslot** array and the **title**.
+
+The **timeslot** array has a very specific format. It is in the form of: `<day> <typeofclass> <starttime> - <endtime>`. 
+
+So, for example, a slot would be:
+> Monday Forum 12:00 - 15:00
+
+Note that the time should be in the 24h format.
+
+On the other hand, each user is stored in the **users** *collection*. Each user has a number of fields. These are **email**, **name**, **role**, **userId** and the **slots** array.
+
+Each entry in the **slots** array has a **timeslot** and a **unit** associated with it.
+
+Therefore, the structure of the firestore filesystem is as follows.
+
+> - units
+>    - unit (stored as an id)
+>       - timeslot (array)
+>       - title
+> - users
+>    - user (stored as an id)
+>       - email
+>       - name
+>       - role
+>       - slots
+>          - slot (as an index)
+>             - timeslot
+>             - unit
+>       - userId
+
+**Note: The userIDs are auto-generated.**
 
 ### Testing
 Explain how to run tests for the application, including details on testing frameworks and sample test cases.
@@ -49,14 +79,20 @@ Explain how to run tests for the application, including details on testing frame
 ### Troubleshooting
 - Dependency Errors in React: A common issue during development is that developers forget to `npm install` before running the application and after pulling.
 
-### Contribution Guidelines
-Encourage contributions by providing guidelines on coding standards, submitting pull requests, and reporting issues.
-
 ### Security Considerations
 For security, we rely on Google's Firebase encryption. The only way to gain access to the database is to access it using a developer's Google account. However, all Google accounts come with two-factor authentication now, making unauthorised access extremely difficult.
 
 ### Future Roadmap
 Share plans for future development, upcoming features, improvements, or known limitations to be addressed in future releases.
+
+For future releases, our roadmap suggests implementing the following features:
+- Dark mode
+- Profile pictures for users
+- Sounds when interacting with elements
+
+Our limitations at the moment are:
+- The application cannot show the classroom for the allocated timeslot
+- Our application does not account for clashes, both slots are shown allocated together
 
 ### Licensing
 The Timetable Management App is distributed under the MIT license. Refer to the LICENSE file for details.
