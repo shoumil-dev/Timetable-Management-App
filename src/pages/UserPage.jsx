@@ -138,6 +138,9 @@ const UserPage = () => {
             <div className="text-gray-700 font-bold text-lg">User Id:</div>
             <div className="text-gray-600 text-lg">{userDetails.userId}</div>
 
+            <div className="text-gray-700 font-bold text-lg">Account type:</div>
+            <div className="text-gray-600 text-lg">{userDetails.role}</div>
+
             <div className="text-gray-700 font-bold text-lg">Class slots:</div>
             <div className="text-gray-600 text-lg">
               {userDetails.slots && userDetails.slots.length > 0 ? (
