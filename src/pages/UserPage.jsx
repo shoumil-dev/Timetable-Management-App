@@ -10,9 +10,11 @@ import { faUserEdit } from '@fortawesome/free-solid-svg-icons';
 const UserPage = () => {
   const [userDetails, setUserDetails] = useState(null);
   const [nameInput, setNameInput] = useState("");
+  const [genderInput, setGenderInput] = useState("");
+  const [birthdateInput, setBirthdateInput] = useState("");
   const [isEditing, setIsEditing] = useState(false);
 
-  useEffect(() => {
+  useEffect(() => { 
     const fetchUserDetails = async () => {
       try {
         const userDocRef = doc(collection(db, "users"), auth.currentUser.uid);
@@ -38,6 +40,28 @@ const UserPage = () => {
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating user name:", error);
+    }
+  };
+
+  const handleGenderSubmit = async () => {
+    try {
+      const userDocRef = doc(collection(db, "users"), auth.currentUser.uid);
+      await setDoc(userDocRef, { gender: genderInput }, { merge: true });
+
+      setUserDetails({ ...userDetails, gender: genderInput });
+    } catch (error) {
+      console.error("Error updating gender:", error);
+    }
+  };
+  
+  const handleBirthdateSubmit = async () => {
+    try {
+      const userDocRef = doc(collection(db, "users"), auth.currentUser.uid);
+      await setDoc(userDocRef, { birthdate: birthdateInput }, { merge: true });
+
+      setUserDetails({ ...userDetails, birthdate: birthdateInput });
+    } catch (error) {
+      console.error("Error updating birthdate:", error);
     }
   };
 
@@ -111,7 +135,7 @@ const UserPage = () => {
             <div className="text-gray-700 font-bold text-lg">Email:</div>
             <div className="text-gray-600 text-lg">{userDetails.email}</div>
 
-            <div className="text-gray-700 font-bold text-lg">Id:</div>
+            <div className="text-gray-700 font-bold text-lg">User Id:</div>
             <div className="text-gray-600 text-lg">{userDetails.userId}</div>
 
             <div className="text-gray-700 font-bold text-lg">Class slots:</div>
@@ -134,6 +158,72 @@ const UserPage = () => {
                 <p>No time slots allocated.</p>
               )}
             </div>
+
+            <div className="text-gray-700 font-bold text-lg">Gender:</div>
+          <div className="flex items-center">
+            {isEditing ? (
+              <div>
+                <select
+                  value={genderInput}
+                  onChange={(e) => setGenderInput(e.target.value)}
+                  className="border-2 border-gray-500 rounded-md p-2 text-lg"
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+                <button
+                  onClick={handleGenderSubmit}
+                  className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded ml-2"
+                >
+                  Save
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center">
+                <p className="text-gray-600 text-lg">{userDetails.gender || "Gender not set"}</p>
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded ml-2"
+                >
+                  {userDetails.gender ? "Edit" : "Add"}
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className="text-gray-700 font-bold text-lg">Birthdate:</div>
+          <div className="flex items-center">
+            {isEditing ? (
+              <div>
+                <input
+                  type="date"
+                  value={birthdateInput}
+                  onChange={(e) => setBirthdateInput(e.target.value)}
+                  className="border-2 border-gray-500 rounded-md p-2 text-lg"
+                />
+                <button
+                  onClick={handleBirthdateSubmit}
+                  className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded ml-2"
+                >
+                  Save
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center">
+                <p className="text-gray-600 text-lg">{userDetails.birthdate || "Birthdate not set"}</p>
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded ml-2"
+                >
+                  {userDetails.birthdate ? "Edit" : "Add"}
+                </button>
+              </div>
+            )}
+          </div>
+
+          
           </div>
         ) : (
           <p>Loading user details...</p>
