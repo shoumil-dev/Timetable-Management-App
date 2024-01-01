@@ -77,7 +77,7 @@ Therefore, the structure of the firestore filesystem is as follows.
 To test the web application, you can use testing frameworks like Jest and the React Testing Library. You can then run `npm test` to execute tests. Currently, there are no tests written. Everything has been tested manually.
 
 ### Troubleshooting ⚠️
-- Dependency Errors in React: A common issue during development is that developers forget to `npm install` before running the application and after pulling.
+Dependency Errors in React: A common issue during development is that developers forget to `npm install` before running the application and after pulling.
 
 ### Security Considerations 🔐
 For security, we rely on Google's Firebase encryption. The only way to gain access to the database is to access it using a developer's Google account. However, all Google accounts come with two-factor authentication now, making unauthorised access extremely difficult.
@@ -99,7 +99,8 @@ The Timetable Management App is distributed under the MIT license. Refer to the 
 
 ### Contact Information 📧
 For inquiries or support, contact the original project team:
-- [Mikhail](mailto:mhar0027@student.monash.edu)
-- [Shoumil](mailto:sguh0003@student.monash.edu)
-- [En Xin](mailto:ewon0024@student.monash.edu)
-- [Khoa](mailto:angu0093@student.monash.edu)
+- [Mikhail - mhar0027@student.monash.edu](mailto:mhar0027@student.monash.edu)
+- [En Xin - ewon0024@student.monash.edu](mailto:ewon0024@student.monash.edu)
+- [Khoa - angu0093@student.monash.edu](mailto:angu0093@student.monash.edu)
+- [Shoumil - sguh0003@student.monash.edu](mailto:sguh0003@student.monash.edu)
+
