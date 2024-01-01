@@ -145,8 +145,8 @@ const Select = () => {
   
   
   return (
-    <div className="bg-white dark:bg-slate-800 shadow-xl overflow-hidden">
-      <header className="bg-black text-white text-center font-serif text-3xl py-6 border-b border-white dark:border-slate-800">
+    <div className="bg-white shadow-xl overflow-hidden">
+      <header className="bg-black text-white text-center font-serif text-3xl py-6 border-b border-white">
         Time Table Monash
       </header>
       <nav className="bg-black text-white p-4">
