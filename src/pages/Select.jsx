@@ -178,12 +178,12 @@ const Select = () => {
         </ul>
       </nav>
 
-      <div className="flex h-screen dark: bg-zinc-900 text-white">
+      <div className="flex h-screen dark:bg-zinc-900 text-black dark:text-white">
         <div className="overflow-auto ring-2 ring-zinc-300 w-1/5 rounded-2xl text-xl mr-4 m-20 text-center">
           {units.map((unit) => (
             <div
               key={unit.title}
-              className={`p-8 hover:bg-black dark:hover:bg-zinc-700 hover:text-white border-b-2 ${selectedUnit && selectedUnit === unit.title ? "bg-zinc-700 text-white" : ""
+              className={`p-8 hover:bg-black dark:hover:bg-zinc-700 hover:text-white border-b-2 ${selectedUnit && selectedUnit === unit.title ? "bg-black text-white dark:hover:bg-zinc-700 dark:bg-zinc-700" : ""
                 }`}
             >
               <button onClick={() => handleUnitClick(unit.title)}>
