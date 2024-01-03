@@ -51,99 +51,105 @@ const SignUp = () => {
   };
 
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center my-52 px-6 py-12 lg:px-8 font-mono">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 className="mt-10 text-center text-6xl font-bold leading-9 tracking-tight text-gray-900 my-12">
-          Sign Up
-        </h2>
-      </div>
-
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form className="space-y-6" onSubmit={signUp}>
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Email address
-            </label>
-            <div className="mt-2">
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="block w-full rounded-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-900 sm:text-sm sm:leading-6"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium leading-6 text-gray-900"
-            >
-              Password
-            </label>
-            <div className="mt-2">
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="block w-full rounded-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-900 sm:text-sm sm:leading-6"
-              />
-            </div>
-          </div>
-
-          {error && (
-            <div className="text-red-500">{error}</div>
-          )}
-
-<div>
-          <label
-            htmlFor="status"
-            className="block text-sm font-medium leading-6 text-gray-900"
-          >
-            User Status
-          </label>
-          <div className="mt-2">
-            <select
-              id="status"
-              name="status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="block w-full rounded-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-gray-900 sm:text-sm sm:leading-6"
-            >
-              <option value="">Select status</option>
-              <option value="lecturer">Lecturer</option>
-              <option value="student">Student</option>
-            </select>
-          </div>
+    <html className="dark:bg-zinc-900 h-screen">
+      <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 font-mono">
+        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+          <h2 className="mt-10 text-center text-6xl font-bold leading-9 tracking-tight text-zinc-900 dark:text-white my-12">
+            Sign Up
+          </h2>
         </div>
 
-          <div className="flex items-center justify-center">
-            <button
-              type="submit"
-              className="flex w-2/5 justify-center rounded-full bg-gray-900 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-neutral-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900"
-            >
-              Sign Up
-            </button>
-          </div>
-        </form>
-        <ToastContainer />
+        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+          <form className="space-y-6" onSubmit={signUp}>
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium leading-6 text-zinc-900 dark:text-white"
+              >
+                Email address
+              </label>
+              <div className="mt-2">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="block w-full rounded-full border-0 py-1.5 text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-zinc-900 sm:text-sm sm:leading-6
+                  dark:text-white dark:bg-zinc-900 dark:focus:ring-zinc-50"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium leading-6 text-zinc-900 dark:text-white"
+              >
+                Password
+              </label>
+              <div className="mt-2">
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="block w-full rounded-full border-0 py-1.5 text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-zinc-900 sm:text-sm sm:leading-6
+                  dark:text-white dark:bg-zinc-900 dark:focus:ring-zinc-50"
+                />
+              </div>
+            </div>
+
+            {error && (
+              <div className="text-red-500">{error}</div>
+            )}
+
+            <div>
+              <label
+                htmlFor="status"
+                className="block text-sm font-medium leading-6 text-zinc-900 dark:text-white"
+              >
+                User Status
+              </label>
+              <div className="mt-2">
+                <select
+                  id="status"
+                  name="status"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="block w-full rounded-full border-0 py-1.5 text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-300 focus:ring-2 focus:ring-inset focus:ring-zinc-900 sm:text-sm sm:leading-6
+                  dark:text-white dark:bg-zinc-900 dark:focus:ring-zinc-50"
+                >
+                  <option value="">Select status</option>
+                  <option value="lecturer">Lecturer</option>
+                  <option value="student">Student</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-center">
+              <button
+                type="submit"
+                className="flex w-2/5 justify-center rounded-full bg-zinc-900 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-neutral-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900
+                dark:bg-zinc-700 dark:focus-visible:outline-zinc-50 transition duration-300"
+              >
+                Sign Up
+              </button>
+            </div>
+          </form>
+          <ToastContainer />
+        </div>
+        <div className="text-sm text-center mt-4 dark:text-white font-semibold">
+          <span>Already have an account?</span>{" "}
+          <Link to="/" className="underline dark:hover:text-zinc-300 hover:text-zinc-500">Sign In</Link>
+        </div>
       </div>
-      <div className="text-sm text-center mt-4">
-        <span>Already have an account?</span>{" "}
-        <Link to="/">Sign In</Link>
-      </div>
-    </div>
+    </html>
   );
 };
 
