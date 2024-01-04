@@ -8,12 +8,15 @@ import { registerLicense } from '@syncfusion/ej2-base';
 import '@syncfusion/ej2-base/styles/bootstrap.css';
 import '@syncfusion/ej2-react-schedule/styles/material.css'; // or any other theme
 import Notification from './Notification';
+import './Home.css';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faUser } from '@fortawesome/free-solid-svg-icons';
 
 
-registerLicense('Ngo9BigBOggjHTQxAR8/V1NHaF1cWWhIYVZpR2Nbe05zfldCal9UVAciSV9jS31SdEVlWXxcdHdTRWdaUg==');
+// registerLicense('Ngo9BigBOggjHTQxAR8/V1NHaF1cWWhIYVZpR2Nbe05zfldCal9UVAciSV9jS31SdEVlWXxcdHdTRWdaUg==');
+// Ngo9BigBOggjHTQxAR8/V1NAaF5cWWJCfEx3WmFZfVpgcl9CYVZTQGYuP1ZhSXxXdkRjW39YdHVXQ2FVV0E=
+registerLicense('Ngo9BigBOggjHTQxAR8/V1NHaF1cWGhIYVZpR2Nbe05zfldCal9UVAciSV9jS3pTd0VhWXlbdXRcQmRdUg==');
 
 const Home = () => {
     const [selectedTimeslots, setSelectedTimeslots] = useState({});
@@ -86,7 +89,7 @@ const Home = () => {
             }
         }
         setTimeTableDataAllocated(convertedData);
-        console.log(convertedData);
+        // console.log(convertedData);
     };
 
     const parseTimeSlots = (timeSlots, unit) => {
@@ -126,6 +129,14 @@ const Home = () => {
             };
         }).filter(item => item !== null); // Remove null entries from the array
     }
+
+    const eventTemplate = (props) => {
+        return (
+        <div className="template-wrap">
+            <div className="subject" style={{ background: props.PrimaryColor }}>{props.Subject}</div>
+            <div className="footer" style={{ background: props.PrimaryColor }}> abc </div>
+        </div>);
+    };
 
     return (
         <div>
@@ -176,11 +187,13 @@ const Home = () => {
                     </div>
                 ))}
             </div> */}
-            <ScheduleComponent eventSettings={{ dataSource: timeTableDataAllocated }} currentView="WorkWeek" height='730px'>
-                <ViewsDirective>
+            <ScheduleComponent eventSettings={{ dataSource: timeTableDataAllocated}}  
+            currentView="WorkWeek" height='730px'
+            >
+                <ViewsDirective >
                     <ViewDirective option='Day' startHour="08:00" endHour="21:00" interval={2} displayName="2 Days"></ViewDirective>
-                    <ViewDirective option='TimelineDay' startHour="08:00" endHour="21:00"></ViewDirective>
-                    <ViewDirective option='WorkWeek' isSelected={true} startHour="08:00" endHour="21:00" ></ViewDirective>
+                    <ViewDirective option='TimelineDay' startHour="08:00" endHour="21:00"></ViewDirective> 
+                    <ViewDirective option='WorkWeek' isSelected={true} startHour="08:00" endHour="21:00" eventTemplate={eventTemplate} />
                     <ViewDirective option='Month' startHour="08:00" endHour="21:00" showWeekNumber={true} showWeekend={false}></ViewDirective>
                     <ViewDirective option='Agenda'></ViewDirective>
                 </ViewsDirective>
