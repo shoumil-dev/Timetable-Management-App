@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { doc, collection, getDoc } from "firebase/firestore";
 import { auth } from "../firebase-handler";
 import { Inject, ScheduleComponent, Day, Week, WorkWeek, Month, Agenda, ViewDirective, ViewsDirective, TimelineViews, TimelineMonth } from '@syncfusion/ej2-react-schedule';
-import { registerLicense } from '@syncfusion/ej2-base';
+import { registerLicense, Internationalization } from '@syncfusion/ej2-base';
 import '@syncfusion/ej2-base/styles/bootstrap.css';
 import '@syncfusion/ej2-react-schedule/styles/material.css'; // or any other theme
 import Notification from './Notification';
@@ -22,6 +22,36 @@ const Home = () => {
     const [selectedTimeslots, setSelectedTimeslots] = useState({});
     const [timeTableDataAllocated, setTimeTableDataAllocated] = useState([]);
     const [showNotification, setShowNotification] = useState(false);
+
+    const defaultColors = [
+        '#FF5733',
+        '#5300ff',
+        '#36A2EB',
+        '#4CAF50',
+        '#ff9680',
+        '#ff80aa',
+        '#aaff80',
+        '#ddffcd',
+        '#a67100',
+        '#0088a6',
+        '#88a600',
+        '#a61e00',
+    ];
+
+    const secondColors = [
+        '#FFA895',
+        '#9562ff',
+        '#8fcbf4',
+        '#aadaac',
+        '#ffc7bb',
+        '#ffbbd1',
+        '#aaff80',
+        '#d1ffbb',
+        '#ffca58',
+        '#6be4ff',
+        '#daff30',
+        '#ff6644',
+    ];
 
     const handleNotificationButtonClick = () => {
         setShowNotification(true);
@@ -88,8 +118,14 @@ const Home = () => {
                 convertedData = [...convertedData, ...parseTimeSlots(timeSlots, unit)];
             }
         }
+        // Assign a primary color to each event from the defaultColors array
+        convertedData.forEach((event, index) => {
+            event.PrimaryColor = defaultColors[index % defaultColors.length];
+            event.SecondaryColor = secondColors[index % secondColors.length];
+        });
+
         setTimeTableDataAllocated(convertedData);
-        // console.log(convertedData);
+        console.log(convertedData);
     };
 
     const parseTimeSlots = (timeSlots, unit) => {
@@ -130,11 +166,17 @@ const Home = () => {
         }).filter(item => item !== null); // Remove null entries from the array
     }
 
+    let instance = new Internationalization();
+    const getTimeString = (value) => {
+        return instance.formatDate(value, { skeleton: 'hm' });
+    };
+
     const eventTemplate = (props) => {
+        console.log(props.PrimaryColor)
         return (
-        <div className="template-wrap">
-            <div className="subject" style={{ background: props.PrimaryColor }}>{props.Subject}</div>
-            <div className="footer" style={{ background: props.PrimaryColor }}> abc </div>
+        <div className="template-wrap" style={{ background: props.SecondaryColor }}>
+            <div className="subject" style={{ background: props.PrimaryColor, width: '120%', marginLeft:'-20px', marginTop:'-6px', paddingBottom:'20px', fontWeight:'600', fontSize:'16px' }}>{props.Subject}</div>
+            <div className="time" style={{ background: props.PrimaryColor, width: '120%', marginLeft:'-20px', marginTop:'-6px' , textAlign:'center' }}> Time: {getTimeString(props.StartTime)} - {getTimeString(props.EndTime)}</div>
         </div>);
     };
 
@@ -176,17 +218,6 @@ const Home = () => {
                     </ul>
                 </nav>
             </div>
-            {/* <div>
-                {timeTableDataAllocated.map((event, index) => (
-                    <div key={index}>
-                        <p>{event.Subject}</p>
-                        <p>Start Time: {event.StartTime.toString()}</p>
-                        <p>End Time: {event.EndTime.toString()}</p>
-                        <p>Recurrence Rule: {event.RecurrenceRule}</p>
-                        <hr />
-                    </div>
-                ))}
-            </div> */}
             <ScheduleComponent eventSettings={{ dataSource: timeTableDataAllocated}}  
             currentView="WorkWeek" height='730px'
             >
