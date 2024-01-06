@@ -174,7 +174,7 @@ const Home = () => {
     const eventTemplate = (props) => {
         console.log(props.PrimaryColor)
         return (
-        <div className="template-wrap" style={{ background: props.SecondaryColor }}>
+        <div className="template-wrap" style={{ background: props.SecondaryColor, paddingBottom:'200%' }}>
             <div className="subject" style={{ background: props.PrimaryColor, width: '120%', marginLeft:'-20px', marginTop:'-6px', paddingBottom:'20px', fontWeight:'600', fontSize:'16px' }}>{props.Subject}</div>
             <div className="time" style={{ background: props.PrimaryColor, width: '120%', marginLeft:'-20px', marginTop:'-6px' }}> Time: {getTimeString(props.StartTime)} - {getTimeString(props.EndTime)}</div>
         </div>);

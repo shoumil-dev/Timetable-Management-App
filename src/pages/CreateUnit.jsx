@@ -42,10 +42,16 @@ const CreateUnit = () => {
   useEffect(() => {
     const fetchData = async () => {
       const unitsCollection = collection(db, "units");
-      const snapshot = await getDocs(unitsCollection);
+      // const snapshot = await getDocs(unitsCollection);
 
-      const unitData = snapshot.docs.map((doc) => doc.data());
-      setUnits(unitData);
+      // const unitData = snapshot.docs.map((doc) => doc.data());
+      // Use onSnapshot to listen for real-time updates
+      const snapshot = onSnapshot(unitsCollection, (snapshot) => {
+        const unitData = snapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+      setUnits(unitData);});
     };
     fetchData();
   }, [selectedUnit]);
@@ -116,7 +122,6 @@ const CreateUnit = () => {
   };
 
   const handleEditTimeSlot = async () => {
-    // console.log(selectedUnit.id)
     if (selectedUnit && selectedUnit.id && editedTimeSlot.trim() !== "") {
       // console.log("DDD")
       try {
@@ -125,6 +130,7 @@ const CreateUnit = () => {
         //
         // console.log(users);
         // console.log(updatedTimeSlots[editedTimeSlotIndex]);
+
 
         // Loop through each user and update the corresponding timeSlot
         const updatedUsers = users.map((user) => {
@@ -217,6 +223,7 @@ const CreateUnit = () => {
 
   const handleUnitClick = async (unit) => {
     const unitDoc = units.find((u) => u.title === unit);
+    console.log(unitDoc)
     if (unitDoc) {
       setSelectedUnit({ ...unitDoc, title: unit, id: unitDoc.id });
       const timeSlotsData = unitDoc.timeslot || [];
