@@ -7,8 +7,7 @@ import { auth } from "../firebase-handler";
 import { Inject, ScheduleComponent, Day, Week, WorkWeek, Month, Agenda, ViewDirective, ViewsDirective, TimelineViews, TimelineMonth } from '@syncfusion/ej2-react-schedule';
 import { registerLicense, Internationalization } from '@syncfusion/ej2-base';
 import '@syncfusion/ej2-base/styles/bootstrap.css';
-import '@syncfusion/ej2-react-schedule/styles/material.css'; // or any other theme
-import '@syncfusion/ej2-react-schedule/styles/material-dark.css'; // or any other theme
+import '@syncfusion/ej2-react-schedule/styles/material3.css'; // or any other theme
 import Notification from './Notification';
 import './Home.css';
 
@@ -54,8 +53,23 @@ const Home = () => {
         '#daff30',
         '#ff6644',
     ];
+  // ... other component code
 
-    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)');
+  const [isDarkMode, setIsDarkMode] = useState(
+    window.matchMedia('(prefers-color-scheme: dark)').matches
+  );
+
+  useEffect(() => {
+    const handleMediaQueryChange = () => {
+      setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
+    };
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    mediaQuery.addEventListener('change', handleMediaQueryChange);
+
+    return
+ 
+  }, []);
 
     const handleNotificationButtonClick = () => {
         setShowNotification(true);
@@ -185,7 +199,7 @@ const Home = () => {
     };
 
     return (
-        <div className="dark:bg-zinc-900 h-screen">
+        <div className="dark:bg-zinc-900 h-screen"  class={isDarkMode ? 'e-dark-mode' : ''}>
             <div className="bg-white dark:bg-zinc-900 shadow-xl overflow-hidden">
                 <header className="bg-black text-white text-center font-serif text-3xl py-6 border-b border-white dark:border-zinc-900">
                     Time Table Monash
@@ -223,7 +237,7 @@ const Home = () => {
                 </nav>
             </div>
             <ScheduleComponent eventSettings={{ dataSource: timeTableDataAllocated}}  
-            currentView="WorkWeek" height='825px' theme='material-dark' // Apply theme based on dark mode                    
+            currentView="WorkWeek" height='825px'      
             >
                 <ViewsDirective >
                     <ViewDirective option='Day' startHour="08:00" endHour="21:00" interval={2} displayName="2 Days"></ViewDirective>
