@@ -1,3 +1,4 @@
+// UserPage.jsxs
 import React, { useEffect, useState } from "react";
 import { db } from "../firebase-handler";
 import { Link } from 'react-router-dom';
@@ -129,7 +130,7 @@ const UserPage = () => {
                     {userDetails.name ? "Edit" : "Add"}
                   </button>
                 </div>
-              )}
+              )} 
             </div>
 
             <div className="text-gray-700 font-bold text-lg">Email:</div>

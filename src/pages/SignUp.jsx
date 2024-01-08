@@ -1,3 +1,4 @@
+//SignUp.jsx
 import { auth } from "../firebase-handler";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";

@@ -1,3 +1,4 @@
+// Home.jsx
 import React, { useEffect, useState} from "react";
 import { db } from "../firebase-handler";
 import { Link } from 'react-router-dom';
