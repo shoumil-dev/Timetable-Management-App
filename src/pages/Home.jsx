@@ -9,7 +9,6 @@ import { registerLicense, Internationalization } from '@syncfusion/ej2-base';
 import '@syncfusion/ej2-base/styles/bootstrap.css';
 import '@syncfusion/ej2-react-schedule/styles/material.css'; // or any other theme
 import '@syncfusion/ej2-react-schedule/styles/material-dark.css'; // or any other theme
-import { useMediaQuery } from '@mui/material';
 import Notification from './Notification';
 import './Home.css';
 
