@@ -7,6 +7,8 @@ import { Inject, ScheduleComponent, Day, Week, WorkWeek, Month, Agenda, ViewDire
 import { registerLicense, Internationalization } from '@syncfusion/ej2-base';
 import '@syncfusion/ej2-base/styles/bootstrap.css';
 import '@syncfusion/ej2-react-schedule/styles/material.css'; // or any other theme
+import '@syncfusion/ej2-react-schedule/styles/material-dark.css'; // or any other theme
+import { useMediaQuery } from '@mui/material';
 import Notification from './Notification';
 import './Home.css';
 
@@ -52,6 +54,8 @@ const Home = () => {
         '#daff30',
         '#ff6644',
     ];
+
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)');
 
     const handleNotificationButtonClick = () => {
         setShowNotification(true);
@@ -181,9 +185,9 @@ const Home = () => {
     };
 
     return (
-        <div>
-            <div className="bg-white dark:bg-slate-800 shadow-xl overflow-hidden">
-                <header className="bg-black text-white text-center font-serif text-3xl py-6 border-b border-white dark:border-slate-800">
+        <div className="dark:bg-zinc-900 h-screen">
+            <div className="bg-white dark:bg-zinc-900 shadow-xl overflow-hidden">
+                <header className="bg-black text-white text-center font-serif text-3xl py-6 border-b border-white dark:border-zinc-900">
                     Time Table Monash
                 </header>
                 <nav className="bg-black text-white p-4">
@@ -219,7 +223,7 @@ const Home = () => {
                 </nav>
             </div>
             <ScheduleComponent eventSettings={{ dataSource: timeTableDataAllocated}}  
-            currentView="WorkWeek" height='730px'
+            currentView="WorkWeek" height='825px' theme='material-dark' // Apply theme based on dark mode                    
             >
                 <ViewsDirective >
                     <ViewDirective option='Day' startHour="08:00" endHour="21:00" interval={2} displayName="2 Days"></ViewDirective>
@@ -230,7 +234,7 @@ const Home = () => {
                 </ViewsDirective>
                 <Inject services={[Day, Week, WorkWeek, Month, Agenda, TimelineViews, TimelineMonth]} />
             </ScheduleComponent>
-
+            
         </div>
     );
 };
