@@ -16,11 +16,13 @@ import { faBell, faUser } from '@fortawesome/free-solid-svg-icons';
 
 
 // registerLicense('Ngo9BigBOggjHTQxAR8/V1NHaF1cWWhIYVZpR2Nbe05zfldCal9UVAciSV9jS31SdEVlWXxcdHdTRWdaUg==');
-// Ngo9BigBOggjHTQxAR8/V1NAaF5cWWJCfEx3WmFZfVpgcl9CYVZTQGYuP1ZhSXxXdkRjW39YdHVXQ2FVV0E=
-registerLicense('Ngo9BigBOggjHTQxAR8/V1NHaF1cWGhIYVZpR2Nbe05zfldCal9UVAciSV9jS3pTd0VhWXlbdXRcQmRdUg==');
+// 
+registerLicense('Ngo9BigBOggjHTQxAR8/V1NAaF5cWWJCfEx3WmFZfVpgcl9CYVZTQGYuP1ZhSXxXdkRjW39YdHVXQ2FVV0E=');
 
 const Home = () => {
     const [selectedTimeslots, setSelectedTimeslots] = useState({});
+    const [selectedLocation, setSelectedLocation] = useState({});
+
     const [timeTableDataAllocated, setTimeTableDataAllocated] = useState([]);
     const [showNotification, setShowNotification] = useState(false);
 
@@ -108,11 +110,16 @@ const Home = () => {
             if (userDocSnapshot.exists()) {
                 const userSelectedTimeslots = userDocSnapshot.data().slots || [];
                 const selectedTimeslotsData = {};
+                const selectedLocationData = {};
+
                 userSelectedTimeslots.forEach((slot) => {
-                    const { unit, timeSlot } = slot;
+                    const { unit, timeSlot, location } = slot;
                     selectedTimeslotsData[unit] = [...(selectedTimeslotsData[unit] || []), timeSlot];
+                    selectedLocationData[unit] = location;
                 });
                 setSelectedTimeslots(selectedTimeslotsData);
+                setSelectedLocation(selectedLocationData);
+                
             }
         } catch (error) {
             console.error("Error loading selected timeslots:", error);
@@ -133,10 +140,11 @@ const Home = () => {
         for (const unit in selectedTimeslots) {
             if (selectedTimeslots.hasOwnProperty(unit)) {
                 const timeSlots = selectedTimeslots[unit];
-                convertedData = [...convertedData, ...parseTimeSlots(timeSlots, unit)];
+                convertedData = [...convertedData, ...parseTimeSlots(timeSlots, unit)];                
             }
         }
         // Assign a primary color to each event from the defaultColors array
+        console.log(selectedLocation)
         convertedData.forEach((event, index) => {
             event.PrimaryColor = defaultColors[index % defaultColors.length];
             event.SecondaryColor = secondColors[index % secondColors.length];
@@ -180,6 +188,7 @@ const Home = () => {
                 StartTime: startDateTime,
                 EndTime: endDateTime,
                 RecurrenceRule: recurrenceRule,
+                Location: selectedLocation[unit]
             };
         }).filter(item => item !== null); // Remove null entries from the array
     }
@@ -190,11 +199,13 @@ const Home = () => {
     };
 
     const eventTemplate = (props) => {
-        console.log(props.PrimaryColor)
+        console.log(props.Location)
         return (
         <div className="template-wrap" style={{ background: props.SecondaryColor, paddingBottom:'200%' }}>
             <div className="subject" style={{ background: props.PrimaryColor, width: '120%', marginLeft:'-20px', marginTop:'-6px', paddingBottom:'20px', fontWeight:'600', fontSize:'16px' }}>{props.Subject}</div>
             <div className="time" style={{ background: props.PrimaryColor, width: '120%', marginLeft:'-20px', marginTop:'-6px' }}> Time: {getTimeString(props.StartTime)} - {getTimeString(props.EndTime)}</div>
+            <div className="event-description" style={{ background: props.PrimaryColor, width: '120%', marginLeft:'-20px', paddingTop:'10px' }}> Location: {props.Location}</div>
+
         </div>);
     };
 

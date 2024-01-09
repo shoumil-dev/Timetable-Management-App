@@ -24,6 +24,8 @@ const CreateUnit = () => {
   const [newTimeSlot, setNewTimeSlot] = useState("");
   const [isAddTimeSlotModalOpen, setIsAddTimeSlotModalOpen] = useState(false);
   const [editedTimeSlot, setEditedTimeSlot] = useState("");
+  const [editedLocation, setEditedLocation] = useState("");
+
   const [isEditTimeSlotModalOpen, setIsEditTimeSlotModalOpen] = useState(false);
   const [editedTimeSlotIndex, setEditedTimeSlotIndex] = useState(null);
 
@@ -142,6 +144,7 @@ const CreateUnit = () => {
                 slot.unit === selectedUnit.title
               ) {
                 user.slots[index].timeSlot = editedTimeSlot.trim();
+                user.slots[index].location = editedLocation.trim();
               }
             });
           }
@@ -425,6 +428,13 @@ const CreateUnit = () => {
                   value={editedTimeSlot}
                   onChange={(e) => setEditedTimeSlot(e.target.value)}
                   placeholder="Enter edited timeslot"
+                  className="border p-2 w-full mb-4"
+                />
+                <input
+                  type="text"
+                  value={editedLocation}
+                  onChange={(e) => setEditedLocation(e.target.value)}
+                  placeholder="Location"
                   className="border p-2 w-full mb-4"
                 />
                 <button
