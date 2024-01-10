@@ -270,7 +270,7 @@ const CreateUnit = () => {
           <li>
             <a
               href="http://localhost:3000/User"
-              className="hover:text-gray-400"
+              className="hover:text-zinc-400"
             >
               <FontAwesomeIcon icon={faUser} />
             </a>
@@ -278,7 +278,7 @@ const CreateUnit = () => {
           <li>
             <a
               href="http://localhost:3000/Home"
-              className="hover:text-gray-400"
+              className="hover:text-zinc-400"
             >
               Home
             </a>
@@ -286,7 +286,7 @@ const CreateUnit = () => {
           <li>
             <a
               href="http://localhost:3000/Create"
-              className="hover:text-gray-400 bg-blue-500 text-white hover:bg-blue-600 p-4"
+              className="hover:text-zinc-400 bg-blue-500 text-white hover:bg-blue-600 p-4"
             >
               Create Unit
             </a>
@@ -294,30 +294,30 @@ const CreateUnit = () => {
           <li>
             <a
               href="http://localhost:3000/Select"
-              className="hover:text-gray-400"
+              className="hover:text-zinc-400"
             >
               Timeslot allocation
             </a>
           </li>
           <li className="ml-auto">
-            <a href="http://localhost:3000/" className="hover:text-gray-400">
+            <a href="http://localhost:3000/" className="hover:text-zinc-400">
               Log Out
             </a>
           </li>
         </ul>
       </nav>
 
-      <div className="flex h-screen">
-        <div className="overflow-auto ring-2 ring-gray-300 w-1/5 rounded-2xl text-xl mr-4 m-20 text-center">
-          <div className="bg-gray-900 text-white p-8 hover:bg-blue-500 hover:text-white border-b-2">
+      <div className="flex h-screen dark:bg-zinc-900 text-black dark:text-white">
+        <div className="overflow-auto ring-2 ring-zinc-300 w-1/5 rounded-2xl text-xl mr-4 m-20 text-center">
+          <div className="bg-black text-white p-8 hover:bg-blue-500 hover:text-white border-b-2">
             <button onClick={() => handleAddUnitClick()}>+ Add Unit +</button>
           </div>
 
           {units.map((unit) => (
             <div
               key={unit.title}
-              className={`p-8 hover:bg-black hover:text-white border-b-2 ${
-                selectedUnit?.title === unit.title ? "bg-black text-white" : ""
+              className={`p-8 hover:bg-black dark:hover:bg-blue-500 hover:text-white border-b-2 ${
+                selectedUnit?.title === unit.title ? "bg-black text-white dark:bg-blue-500" : ""
               }`}
             >
               <button onClick={() => handleUnitClick(unit.title)}>
@@ -329,17 +329,17 @@ const CreateUnit = () => {
 
         {isAddUnitModalOpen && (
           <div
-            className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50"
+            className="fixed inset-0 bg-zinc-500 bg-opacity-75 flex items-center justify-center z-50"
             style={{ pointerEvents: "initial" }}
           >
-            <div className="bg-white p-8 w-1/3">
+            <div className="bg-white p-8 w-1/3 dark:bg-zinc-900 dark:text-white">
               <h2 className="text-2xl mb-4">Add Unit</h2>
               <input
                 type="text"
                 value={newUnit}
                 onChange={(e) => setNewUnit(e.target.value)}
                 placeholder="Enter unit name"
-                className="border p-2 w-full mb-4"
+                className="border p-2 w-full mb-4 text-black"
               />
               <button
                 onClick={handleAddUnit}
@@ -349,7 +349,7 @@ const CreateUnit = () => {
               </button>
               <button
                 onClick={() => setIsAddUnitModalOpen(false)}
-                className="ml-2"
+                className="ml-2 p-2 bg-red-500 text-white"
               >
                 Cancel
               </button>
@@ -357,11 +357,11 @@ const CreateUnit = () => {
           </div>
         )}
 
-        <div className="overflow-auto ring-2 ring-gray-300 w-4/5 rounded-2xl text-xl ml-4 m-20">
-          <div className="bg-gray-900 text-white flex hover:bg-blue-500 hover:text-white justify-between border-b-2">
+        <div className="overflow-auto ring-2 ring-zinc-300 w-4/5 rounded-2xl text-xl ml-4 m-20">
+          <div className="bg-black text-white flex hover:bg-blue-500 hover:text-white justify-between border-b-2">
             <span className="m-8">
               <button onClick={() => handleAddTimeSlotClick()}>
-                + Add timeslot +
+                + Add Timeslot +
               </button>
             </span>
           </div>
@@ -371,13 +371,13 @@ const CreateUnit = () => {
               <span className="m-8">{timeSlot}</span>
               <div className="flex items-center">
                 <button
-                  className="bg-blue-500 text-white py-2 px-4 rounded-2xl m-6 hover:bg-blue-600"
+                  className="bg-blue-500 text-white py-2 px-4 rounded-2xl m-6 hover:bg-blue-600 transition duration-300"
                   onClick={() => handleEditTimeSlotClick(timeSlot, index)}
                 >
                   Edit
                 </button>
                 <button
-                  className="bg-red-500 text-white py-2 px-4 rounded-2xl m-6 hover:bg-red-600"
+                  className="bg-red-500 text-white py-2 px-4 rounded-2xl m-6 hover:bg-red-600 transition duration-300"
                   onClick={() => handleRemoveTimeSlot(index)}
                 >
                   Remove
@@ -388,17 +388,17 @@ const CreateUnit = () => {
 
           {isAddTimeSlotModalOpen && (
             <div
-              className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50"
+              className="fixed inset-0 bg-zinc-500 bg-opacity-75 flex items-center justify-center z-50"
               style={{ pointerEvents: "initial" }}
             >
-              <div className="bg-white p-8 w-1/3">
+              <div className="bg-white p-8 w-1/3 dark:bg-zinc-900 dark:text-white">
                 <h2 className="text-2xl mb-4">Add Timeslot</h2>
                 <input
                   type="text"
                   value={newTimeSlot}
                   onChange={(e) => setNewTimeSlot(e.target.value)}
                   placeholder="Enter timeslot"
-                  className="border p-2 w-full mb-4"
+                  className="border p-2 w-full mb-4 text-black"
                 />
                 <button
                   onClick={handleAddTimeSlot}
@@ -408,7 +408,7 @@ const CreateUnit = () => {
                 </button>
                 <button
                   onClick={() => setIsAddTimeSlotModalOpen(false)}
-                  className="ml-2"
+                  className="ml-2 p-2 bg-red-500 text-white"
                 >
                   Cancel
                 </button>
@@ -418,24 +418,24 @@ const CreateUnit = () => {
 
           {isEditTimeSlotModalOpen && (
             <div
-              className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50"
+              className="fixed inset-0 bg-zinc-500 bg-opacity-75 flex items-center justify-center z-50"
               style={{ pointerEvents: "initial" }}
             >
-              <div className="bg-white p-8 w-1/3">
+              <div className="bg-white p-8 w-1/3 dark:bg-zinc-900">
                 <h2 className="text-2xl mb-4">Edit Timeslot</h2>
                 <input
                   type="text"
                   value={editedTimeSlot}
                   onChange={(e) => setEditedTimeSlot(e.target.value)}
-                  placeholder="Enter edited timeslot"
-                  className="border p-2 w-full mb-4"
+                  placeholder="Enter Edited Timeslot"
+                  className="border p-2 w-full mb-4 text-black"
                 />
                 <input
                   type="text"
                   value={editedLocation}
                   onChange={(e) => setEditedLocation(e.target.value)}
                   placeholder="Location"
-                  className="border p-2 w-full mb-4"
+                  className="border p-2 w-full mb-4 text-black"
                 />
                 <button
                   onClick={handleEditTimeSlot}
@@ -445,7 +445,7 @@ const CreateUnit = () => {
                 </button>
                 <button
                   onClick={() => setIsEditTimeSlotModalOpen(false)}
-                  className="ml-2"
+                  className="ml-2 p-2 bg-red-500 text-white"
                 >
                   Cancel
                 </button>
