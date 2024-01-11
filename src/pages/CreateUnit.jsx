@@ -210,9 +210,8 @@ const CreateUnit = () => {
       const slotCollection = collection(db, 'slots');
       console.log(selectedTimeslot)
       const slotQuery = query(slotCollection, where('unit', '==', selectedUnit.title), where('timeSlot', '==', selectedTimeslot.timeSlot));
-      console.log(slotQuery)
       const slotSnapshot = await getDocs(slotQuery);
-      
+      console.log(!slotSnapshot.empty)
 
       if (!slotSnapshot.empty) {
         console.log("inside")
