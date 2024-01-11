@@ -20,6 +20,7 @@ import { faBell, faUser } from "@fortawesome/free-solid-svg-icons";
 const CreateUnit = () => {
   const [units, setUnits] = useState([]);
   const [selectedUnit, setSelectedUnit] = useState({});
+  const [selectedTimeslot, setSelectedTimeslot] = useState({});
   const [timeSlots, setTimeSlots] = useState([]);
   const [newUnit, setNewUnit] = useState("");
   const [isAddUnitModalOpen, setIsAddUnitModalOpen] = useState(false);
@@ -32,6 +33,7 @@ const CreateUnit = () => {
   const [editedTimeSlotIndex, setEditedTimeSlotIndex] = useState(null);
 
   const [users, setUsers] = useState([]);
+  const [slots, setSlots] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,8 +42,16 @@ const CreateUnit = () => {
 
       const userData = snapshot.docs.map((doc) => doc.data());
       setUsers(userData);
+
+      const slotsCollection = collection(db, "slots");
+      const slotssnapshot = await getDocs(slotsCollection);
+
+      const slotData = slotssnapshot.docs.map((doc) => doc.data());
+      setSlots(slotData);
     };
     fetchData();
+
+    
   }, [selectedUnit]);
 
   useEffect(() => {
@@ -139,6 +149,11 @@ const CreateUnit = () => {
     console.log("Edit timeslot button clicked"); // Check if this is logged
     setEditedTimeSlot(timeSlot);
     setEditedTimeSlotIndex(index);
+    const selectedTimeslotData = slots.find(
+      (slot) => slot.unit === selectedUnit.title && slot.timeSlot === timeSlot
+    );
+    setSelectedTimeslot(selectedTimeslotData);
+    console.log(selectedTimeslot)
     setIsEditTimeSlotModalOpen(true);
   };
 
@@ -162,7 +177,6 @@ const CreateUnit = () => {
           }
           return user;
         });
-        // console.log(updatedUsers)
 
         // Update the users locally
         setUsers(updatedUsers);
@@ -173,25 +187,44 @@ const CreateUnit = () => {
           await updateDoc(userDocRef, { slots: user.slots });
         });
         await Promise.all(updateUsersPromises);
+        
         updatedTimeSlots[editedTimeSlotIndex] = editedTimeSlot.trim();
         const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
         await updateDoc(unitDocRef, { 
           timeslot: updatedTimeSlots});
 
-        // Get the slot corresponding to the edited timeslot
+
+        const updatedSlots = slots.map((slot) => {
+          if (slot.timeSlot) {
+            if (
+                slot.unit === selectedUnit.title
+              ) {
+                slot.timeSlot = editedTimeSlot.trim();
+                slot.location = editedLocation.trim();
+              };
+          }
+          return slot;
+        });
+        setSlots(updatedSlots)
+
       const slotCollection = collection(db, 'slots');
-      const slotQuery = query(slotCollection, where('unit', '==', selectedUnit.title), where('timeSlot', '==', editedTimeSlot.trim()));
+      console.log(selectedTimeslot)
+      const slotQuery = query(slotCollection, where('unit', '==', selectedUnit.title), where('timeSlot', '==', selectedTimeslot.timeSlot));
+      console.log(slotQuery)
       const slotSnapshot = await getDocs(slotQuery);
+      
 
       if (!slotSnapshot.empty) {
+        console.log("inside")
         const slotDocRef = slotSnapshot.docs[0].ref;
 
-        // Check if the notification field exists
+        // Update the notification field in the same slot document
         const slotData = slotSnapshot.docs[0].data();
         const notificationArray = slotData.notification || [];
 
-        // Update notification in the same slot document
         await updateDoc(slotDocRef, {
+          timeSlot: editedTimeSlot.trim(),
+          location: editedLocation.trim(),
           notification: [
             ...notificationArray,
             `${selectedUnit.title} ${editedTimeSlot.trim()} has been changed to ${editedTimeSlot.trim()}.`,
@@ -209,7 +242,7 @@ const CreateUnit = () => {
         setTimeSlots(updatedTimeSlots);
         setSelectedUnit((prevUnit) => ({
           ...prevUnit,
-          timeslot: updatedTimeSlots
+          timeSlot: updatedTimeSlots
         }));
 
         setIsEditTimeSlotModalOpen(false);
