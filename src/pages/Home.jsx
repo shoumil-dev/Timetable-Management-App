@@ -23,6 +23,7 @@ const Home = () => {
     const [selectedTimeslots, setSelectedTimeslots] = useState({});
     const [timeTableDataAllocated, setTimeTableDataAllocated] = useState([]);
     const [showNotification, setShowNotification] = useState(false);
+    const [notifications, setNotifications] = useState([]);
 
     const defaultColors = [
         '#FF5733',
@@ -58,6 +59,7 @@ const Home = () => {
   const [isDarkMode, setIsDarkMode] = useState(
     window.matchMedia('(prefers-color-scheme: dark)').matches
   );
+  
 
   useEffect(() => {
     const handleMediaQueryChange = () => {

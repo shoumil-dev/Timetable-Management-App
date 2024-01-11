@@ -82,6 +82,19 @@ const CreateUnit = () => {
     }
   };
 
+  const addSlotToFirestore = async (unitId, timeSlot) => {
+    try {
+      const slotData = {
+        unit: selectedUnit.title,
+        timeSlot: timeSlot.trim(),
+      };
+      const slotRef = await addDoc(collection(db, 'slots'), slotData);
+      console.log('Slot added with ID:', slotRef.id);
+    } catch (error) {
+      console.error('Error adding slot:', error);
+    }
+  };
+
   const handleAddTimeSlotClick = () => {
     console.log("Add timeslot button clicked"); // Check if this is logged
     setIsAddTimeSlotModalOpen(true);
@@ -91,6 +104,8 @@ const CreateUnit = () => {
     if (selectedUnit && selectedUnit.id && newTimeSlot.trim() !== "") {
       try {
         const updatedTimeSlots = [...timeSlots, newTimeSlot.trim()];
+
+        await addSlotToFirestore(selectedUnit.id, newTimeSlot.trim());
 
         const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
 
@@ -158,10 +173,7 @@ const CreateUnit = () => {
           await updateDoc(userDocRef, { slots: user.slots });
         });
         await Promise.all(updateUsersPromises);
-
         updatedTimeSlots[editedTimeSlotIndex] = editedTimeSlot.trim();
-
-
         const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
 
         await updateDoc(unitDocRef, { timeslot: updatedTimeSlots });
