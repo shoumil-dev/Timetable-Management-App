@@ -8,6 +8,8 @@ import {
   getDocs,
   updateDoc,
   onSnapshot,
+  query,
+  where
 } from "firebase/firestore";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -89,6 +91,7 @@ const CreateUnit = () => {
       const slotData = {
         unit: selectedUnit.title,
         timeSlot: timeSlot.trim(),
+        notification: [],
       };
       const slotRef = await addDoc(collection(db, 'slots'), slotData);
       console.log('Slot added with ID:', slotRef.id);
@@ -141,14 +144,8 @@ const CreateUnit = () => {
 
   const handleEditTimeSlot = async () => {
     if (selectedUnit && selectedUnit.id && editedTimeSlot.trim() !== "") {
-      // console.log("DDD")
       try {
         const updatedTimeSlots = [...timeSlots];
-
-        //
-        // console.log(users);
-        // console.log(updatedTimeSlots[editedTimeSlotIndex]);
-
 
         // Loop through each user and update the corresponding timeSlot
         const updatedUsers = users.map((user) => {
@@ -178,8 +175,29 @@ const CreateUnit = () => {
         await Promise.all(updateUsersPromises);
         updatedTimeSlots[editedTimeSlotIndex] = editedTimeSlot.trim();
         const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
+        await updateDoc(unitDocRef, { 
+          timeslot: updatedTimeSlots});
 
-        await updateDoc(unitDocRef, { timeslot: updatedTimeSlots });
+        // Get the slot corresponding to the edited timeslot
+      const slotCollection = collection(db, 'slots');
+      const slotQuery = query(slotCollection, where('unit', '==', selectedUnit.title), where('timeSlot', '==', editedTimeSlot.trim()));
+      const slotSnapshot = await getDocs(slotQuery);
+
+      if (!slotSnapshot.empty) {
+        const slotDocRef = slotSnapshot.docs[0].ref;
+
+        // Check if the notification field exists
+        const slotData = slotSnapshot.docs[0].data();
+        const notificationArray = slotData.notification || [];
+
+        // Update notification in the same slot document
+        await updateDoc(slotDocRef, {
+          notification: [
+            ...notificationArray,
+            `${selectedUnit.title} ${editedTimeSlot.trim()} has been changed to ${editedTimeSlot.trim()}.`,
+          ],
+        });
+      }
 
         // Show success notification
         toast.success("Timeslot has been edited successfully!");
@@ -191,7 +209,7 @@ const CreateUnit = () => {
         setTimeSlots(updatedTimeSlots);
         setSelectedUnit((prevUnit) => ({
           ...prevUnit,
-          timeslot: updatedTimeSlots,
+          timeslot: updatedTimeSlots
         }));
 
         setIsEditTimeSlotModalOpen(false);
