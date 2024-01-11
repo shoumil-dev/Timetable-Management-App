@@ -184,7 +184,7 @@ const Select = () => {
           {units.map((unit) => (
             <div
               key={unit.title}
-              className={`p-8 hover:bg-black dark:hover:bg-zinc-700 hover:text-white border-b-2 ${selectedUnit && selectedUnit === unit.title ? "bg-black text-white dark:hover:bg-zinc-700 dark:bg-zinc-700" : ""
+              className={`p-8 hover:bg-black dark:hover:bg-blue-500 hover:text-white border-b-2 ${selectedUnit && selectedUnit === unit.title ? "bg-black text-white dark:hover:bg-blue-500 dark:bg-blue-500" : ""
                 }`}
             >
               <button onClick={() => handleUnitClick(unit.title)}>
