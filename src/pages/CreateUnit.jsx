@@ -149,11 +149,15 @@ const CreateUnit = () => {
     console.log("Edit timeslot button clicked"); // Check if this is logged
     setEditedTimeSlot(timeSlot);
     setEditedTimeSlotIndex(index);
+
     const selectedTimeslotData = slots.find(
       (slot) => slot.unit === selectedUnit.title && slot.timeSlot === timeSlot
     );
     setSelectedTimeslot(selectedTimeslotData);
-    console.log(selectedTimeslot)
+    
+    console.log("selected data: ",selectedTimeslotData)
+    console.log("selected timeslot: ", selectedTimeslot)
+    
     setIsEditTimeSlotModalOpen(true);
   };
 
@@ -161,6 +165,54 @@ const CreateUnit = () => {
     if (selectedUnit && selectedUnit.id && editedTimeSlot.trim() !== "") {
       try {
         const updatedTimeSlots = [...timeSlots];
+
+        const slotCollection = collection(db, 'slots');
+        console.log(selectedTimeslot)
+
+        console.log("selectedUnit.title:", selectedUnit.title);
+        console.log("selectedTimeslot.timeSlot:", selectedTimeslot.timeSlot);
+        
+        const slotQuery = query(
+          slotCollection,
+          where('unit', '==', selectedUnit.title),
+          where('timeSlot', '==', selectedTimeslot.timeSlot)
+        );
+        console.log("Slot Query:", slotQuery);
+        
+        const slotSnapshot = await getDocs(slotQuery);
+        console.log("Slot Snapshot:", slotSnapshot.docs);
+        
+        if (!slotSnapshot.empty) {
+          console.log("Inside if statement");
+          const slotDocRef = slotSnapshot.docs[0].ref;
+        console.log(selectedTimeslot)
+
+        const updatedSlots = slots.map((slot) => {
+          if (slot.timeSlot) {
+            if (
+                slot.unit === selectedUnit.title
+              ) {
+                slot.timeSlot = editedTimeSlot.trim();
+                slot.location = editedLocation.trim();
+              };
+          }
+          return slot;
+        });
+        setSlots(updatedSlots)
+      
+        // Update the notification field in the same slot document
+        const slotData = slotSnapshot.docs[0].data();
+        const notificationArray = slotData.notification || [];
+      
+        await updateDoc(slotDocRef, {
+          timeSlot: editedTimeSlot.trim(),
+          location: editedLocation.trim(),
+          notification: [
+            ...notificationArray,
+            `${selectedUnit.title} ${editedTimeSlot.trim()} has been changed to ${editedTimeSlot.trim()}.`,
+          ],
+        });
+      }
 
         // Loop through each user and update the corresponding timeSlot
         const updatedUsers = users.map((user) => {
@@ -192,44 +244,6 @@ const CreateUnit = () => {
         const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
         await updateDoc(unitDocRef, { 
           timeslot: updatedTimeSlots});
-
-
-        const updatedSlots = slots.map((slot) => {
-          if (slot.timeSlot) {
-            if (
-                slot.unit === selectedUnit.title
-              ) {
-                slot.timeSlot = editedTimeSlot.trim();
-                slot.location = editedLocation.trim();
-              };
-          }
-          return slot;
-        });
-        setSlots(updatedSlots)
-
-      const slotCollection = collection(db, 'slots');
-      console.log(selectedTimeslot)
-      const slotQuery = query(slotCollection, where('unit', '==', selectedUnit.title), where('timeSlot', '==', selectedTimeslot.timeSlot));
-      const slotSnapshot = await getDocs(slotQuery);
-      console.log(!slotSnapshot.empty)
-
-      if (!slotSnapshot.empty) {
-        console.log("inside")
-        const slotDocRef = slotSnapshot.docs[0].ref;
-
-        // Update the notification field in the same slot document
-        const slotData = slotSnapshot.docs[0].data();
-        const notificationArray = slotData.notification || [];
-
-        await updateDoc(slotDocRef, {
-          timeSlot: editedTimeSlot.trim(),
-          location: editedLocation.trim(),
-          notification: [
-            ...notificationArray,
-            `${selectedUnit.title} ${editedTimeSlot.trim()} has been changed to ${editedTimeSlot.trim()}.`,
-          ],
-        });
-      }
 
         // Show success notification
         toast.success("Timeslot has been edited successfully!");
