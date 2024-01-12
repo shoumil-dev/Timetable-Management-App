@@ -9,7 +9,8 @@ import {
   updateDoc,
   onSnapshot,
   query,
-  where
+  where,
+  deleteDoc,
 } from "firebase/firestore";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -319,6 +320,19 @@ const CreateUnit = () => {
       const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
 
       await updateDoc(unitDocRef, { timeslot: updatedTimeSlots });
+
+      // Remove timeslot from the "slots" collection
+      const slotQuery = query(
+        collection(db, 'slots'),
+        where('unit', '==', selectedUnit.title),
+        where('timeSlot', '==', removedTimeSlot)
+      );
+      const slotSnapshot = await getDocs(slotQuery);
+
+      if (!slotSnapshot.empty) {
+        const slotDocRef = slotSnapshot.docs[0].ref;
+        await deleteDoc(slotDocRef);
+      }
 
       // Fetch the updated data from Firestore and log it
       const updatedData = await fetchUpdatedData();
