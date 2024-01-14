@@ -99,7 +99,7 @@ const UserPage = () => {
         </ul>
       </nav>
 
-      <div className="m-4">
+      <div className="m-4" >
         <h2 className="text-3xl font-bold mb-4">User Details</h2>
         {userDetails ? (
           <div className="grid grid-cols-2 gap-4">

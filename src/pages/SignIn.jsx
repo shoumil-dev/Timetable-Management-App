@@ -28,6 +28,7 @@ const SignIn = () => {
               userId,
               email,
               slots: [],
+              notification: [],
             });
             console.log("Logged in Successfully");
             navigate("/home");
