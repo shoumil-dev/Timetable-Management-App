@@ -168,20 +168,20 @@ const CreateUnit = () => {
         const updatedTimeSlots = [...timeSlots];
 
         const slotCollection = collection(db, 'slots');
-        console.log(selectedTimeslot)
+        //console.log(selectedTimeslot)
 
-        console.log("selectedUnit.title:", selectedUnit.title);
-        console.log("selectedTimeslot.timeSlot:", selectedTimeslot.timeSlot);
+        //console.log("selectedUnit.title:", selectedUnit.title);
+        //console.log("selectedTimeslot.timeSlot:", selectedTimeslot.timeSlot);
         
         const slotQuery = query(
           slotCollection,
           where('unit', '==', selectedUnit.title),
           where('timeSlot', '==', selectedTimeslot.timeSlot)
         );
-        console.log("Slot Query:", slotQuery);
+        //console.log("Slot Query:", slotQuery);
         
         const slotSnapshot = await getDocs(slotQuery);
-        console.log("Slot Snapshot:", slotSnapshot.docs);
+        //console.log("Slot Snapshot:", slotSnapshot.docs);
         
         if (!slotSnapshot.empty) {
           console.log("Inside if statement");
@@ -237,7 +237,9 @@ const CreateUnit = () => {
         // Update the documents in Firestore for all users
         const updateUsersPromises = updatedUsers.map(async (user) => {
           const userDocRef = doc(collection(db, "users"), user.userId);
-          await updateDoc(userDocRef, { slots: user.slots });
+          await updateDoc(userDocRef, 
+            { slots: user.slots 
+            });
         });
         await Promise.all(updateUsersPromises);
         
