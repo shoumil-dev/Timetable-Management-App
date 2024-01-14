@@ -229,18 +229,8 @@ const Home = () => {
                             <Notification
                                 notifications={[
                                 'FIT2004 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
-                                'FIT2004 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
-                                'FIT2004 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
-                                'FIT2004 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
-                                'FIT2004 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
-                                'FIT2004 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
-                                'FIT2004 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
-                                'FIT2004 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
-                                'FIT2004 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
-                                'FIT2004 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
-                                'FIT2004 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
-                                'FIT2004 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
-                                'FIT2004 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
+                                'FIT2005 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
+                                'FIT2006 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
                                 ]}
                                 onClose={handleNotificationClose}
                             />

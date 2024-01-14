@@ -56,4 +56,8 @@ Notification.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
+Notification.defaultProps = {
+  notifications: [],
+};
+
 export default Notification;

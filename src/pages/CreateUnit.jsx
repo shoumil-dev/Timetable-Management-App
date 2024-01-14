@@ -225,10 +225,6 @@ const CreateUnit = () => {
               ) {
                 user.slots[index].timeSlot = editedTimeSlot.trim();
                 user.slots[index].location = editedLocation.trim();
-
-                const notificationMessage = `${selectedUnit.title} ${editedTimeSlot.trim()} has been changed to ${editedTimeSlot.trim()}.`;
-                user.notifications = user.notifications || [];
-                user.notifications.push(notificationMessage);
               }
             });
           }
