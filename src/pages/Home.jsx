@@ -162,14 +162,23 @@ const Home = () => {
                 console.error('Invalid time slot:', timeSlot);
                 return null; // Skip this iteration if timeSlot is invalid
             }
-
+    
             // Split the time slot into day, subject, and time range
             const [day, subject, ...rest] = timeSlot.split(' ');
             const timeRange = rest.join(' ');
-
+    
             // Extract start and end times from the time range
-            const [startTime, endTime] = timeRange.split(' - ');
-
+            const timeRangeParts = timeRange.split('-');
+    
+            // Check if both start and end times are available
+            if (timeRangeParts.length !== 2) {
+                console.error('Invalid time range:', timeRange);
+                return null; // Skip this iteration if time range is invalid
+            }
+    
+            const startTime = timeRangeParts[0];
+            const endTime = timeRangeParts[1];
+    
             // Get the date based on the day of the week
             const currentDate = new Date();
             currentDate.setMonth(currentDate.getMonth() - 1);
@@ -178,22 +187,23 @@ const Home = () => {
             const startDateTime = new Date(currentDate);
             startDateTime.setDate(currentDate.getDate() + (dayIndex - currentDate.getDay() + 7) % 7);
             startDateTime.setHours(parseInt(startTime.split(':')[0], 10), parseInt(startTime.split(':')[1], 10), 0);
-
+    
             const endDateTime = new Date(startDateTime);
             endDateTime.setHours(parseInt(endTime.split(':')[0], 10), parseInt(endTime.split(':')[1], 10), 0);
-
+    
             // Add recurrence rule
             const recurrenceRule = `FREQ=WEEKLY; INTERVAL=1; BYDAY=${day.toUpperCase().substring(0, 2)};`;
-
+    
             return {
                 Subject: `${unit} - ${subject}`,
                 StartTime: startDateTime,
                 EndTime: endDateTime,
                 RecurrenceRule: recurrenceRule,
-                Location: selectedLocation[unit]
+                Location: selectedLocation[unit] || '' // Ensure Location is defined, provide a default value if not
             };
         }).filter(item => item !== null); // Remove null entries from the array
-    }
+    };
+    
 
     let instance = new Internationalization();
     const getTimeString = (value) => {
@@ -201,15 +211,31 @@ const Home = () => {
     };
 
     const eventTemplate = (props) => {
-        console.log(props.Location)
         return (
-        <div className="template-wrap" style={{ background: props.SecondaryColor, paddingBottom:'200%' }}>
-            <div className="subject" style={{ background: props.PrimaryColor, width: '120%', marginLeft:'-20px', marginTop:'-6px', paddingBottom:'20px', fontWeight:'600', fontSize:'16px' }}>{props.Subject}</div>
-            <div className="time" style={{ background: props.PrimaryColor, width: '120%', marginLeft:'-20px', marginTop:'-6px' }}> Time: {getTimeString(props.StartTime)} - {getTimeString(props.EndTime)}</div>
-            <div className="event-description" style={{ background: props.PrimaryColor, width: '120%', marginLeft:'-20px', paddingTop:'10px' }}> Location: {props.Location}</div>
-
-        </div>);
+            <div className="template-wrap" style={{ background: props.SecondaryColor, height: '100%', padding: '5px' }}>
+                <div className="subject" style={{ background: props.PrimaryColor, fontWeight: '600', fontSize: '16px' }}>
+                    {props.Subject}
+                </div>
+                <div className="time" style={{ background: props.PrimaryColor }}>
+                    Time: {getTimeString(props.StartTime)} - {getTimeString(props.EndTime)}
+                </div>
+                <div className="location" style={{ background: props.PrimaryColor }}>
+                    Location: {props.Location || 'No location specified'}
+                </div>
+                {/* Add the unit and timeslot information */}
+                <div className="unit" style={{ background: props.PrimaryColor }}>
+                    Unit: {props.Subject.split(' - ')[0]}
+                </div>
+                <div className="timeslot" style={{ background: props.PrimaryColor }}>
+                    Timeslot: {props.Subject.split(' - ')[1]}
+                </div>
+            </div>
+        );
     };
+    
+    
+    
+
 
     return (
         <div className="dark:bg-zinc-900 h-screen"  class={isDarkMode ? 'e-dark-mode' : ''}>
