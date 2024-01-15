@@ -125,8 +125,8 @@ const UserPage = () => {
             </Link>
           </li>
           <li><Link to="/Home" className="hover:text-gray-400">Home</Link></li>
-          {userRole === "student" && <li><a href="http://localhost:3000/Create" className="hover:text-gray-400">Create Unit</a></li>}
-          {userRole === "lecturer" && <li><a href="http://localhost:3000/Select" className="hover:text-gray-400">Timeslot allocation</a></li>}
+          {userRole === "lecturer" && <li><a href="http://localhost:3000/Create" className="hover:text-gray-400">Create Unit</a></li>}
+          {userRole === "student" && <li><a href="http://localhost:3000/Select" className="hover:text-gray-400">Timeslot allocation</a></li>}
           <li className="ml-auto"><Link to="/" className="hover:text-gray-400">Log Out</Link></li>
         </ul>
       </nav>

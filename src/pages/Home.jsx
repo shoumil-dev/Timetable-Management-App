@@ -270,8 +270,8 @@ const Home = () => {
                     <ul className="flex space-x-4">
                         <li><a href="http://localhost:3000/User" className="hover:text-gray-400"><FontAwesomeIcon icon={faUser} /></a></li>
                         <li><Link to="/Home" className="hover:text-gray-400 bg-blue-500 text-white hover:bg-blue-600 p-4">Home</Link></li>
-                        {userRole === "student" && <li><a href="http://localhost:3000/Create" className="hover:text-gray-400">Create Unit</a></li>}
-                        {userRole === "lecturer" && <li><a href="http://localhost:3000/Select" className="hover:text-gray-400">Timeslot allocation</a></li>}
+                        {userRole === "lecturer" && <li><a href="http://localhost:3000/Create" className="hover:text-gray-400">Create Unit</a></li>}
+                        {userRole === "student" && <li><a href="http://localhost:3000/Select" className="hover:text-gray-400">Timeslot allocation</a></li>}
                         <li className="ml-auto"><a href="http://localhost:3000/" className="hover:text-gray-400">Log Out</a></li>
                         <li><button onClick={handleNotificationButtonClick}><FontAwesomeIcon icon={faBell} /></button>
                             {showNotification && (
