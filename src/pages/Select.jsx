@@ -1,7 +1,7 @@
 // Select.jsx
 import React, { useState, useEffect } from "react";
 import { db } from "../firebase-handler";
-import { doc, collection, getDocs, updateDoc, getDoc } from "firebase/firestore";
+import { doc, collection, getDocs, updateDoc, getDoc, where, query, startAfter, orderBy } from "firebase/firestore";
 import { auth } from "../firebase-handler";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,6 +12,8 @@ const Select = () => {
   const [selectedUnit, setSelectedUnit] = useState(null);
   const [timeSlots, setTimeSlots] = useState([]);
   const [selectedTimeslots, setSelectedTimeslots] = useState({});
+  const [searchInput, setSearchInput] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,10 +58,32 @@ const Select = () => {
 
   const handleUnitClick = async (unit) => {
     setSelectedUnit(unit);
+    setSearchInput(""); // Clear the search input when a unit is clicked
     const unitDoc = units.find((u) => u.title === unit);
     if (unitDoc) {
       const timeSlotsData = unitDoc.timeslot || [];
       setTimeSlots(timeSlotsData);
+    }
+  };
+
+  const handleSearchChange = async (e) => {
+    setSearchInput(e.target.value);
+    searchUnits(e.target.value);
+  };
+
+  const searchUnits = async (input) => {
+    const unitsRef = collection(db, "units");
+    const q = query(unitsRef, where("title", ">=", input), orderBy("title"), startAfter(input));
+  
+    try {
+      const querySnapshot = await getDocs(q);
+      const results = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setSearchResults(results);
+    } catch (error) {
+      console.error("Error searching units:", error);
     }
   };
 
@@ -176,6 +200,26 @@ const Select = () => {
 
       <div className="flex h-screen dark:bg-zinc-900 text-black dark:text-white">
         <div className="overflow-auto ring-2 ring-zinc-300 w-1/5 rounded-2xl text-xl mr-4 m-20 text-center">
+        <input
+            type="text"
+            placeholder="Search units..."
+            value={searchInput}
+            onChange={handleSearchChange}
+            className="p-2 border-b-2 border-zinc-300 focus:outline-none focus:border-zinc-500"
+          />
+          
+          {searchResults.map((unit) => (
+            <div
+              key={unit.title}
+              className={`p-8 hover:bg-black dark:hover:bg-blue-500 hover:text-white border-b-2 ${selectedUnit && selectedUnit === unit.title ? "bg-black text-white dark:hover:bg-blue-500 dark:bg-blue-500" : ""
+                }`}
+            >
+              <button onClick={() => handleUnitClick(unit.title)}>
+                {unit.title}
+              </button>
+            </div>
+          ))}
+
           {units.map((unit) => (
             <div
               key={unit.title}
