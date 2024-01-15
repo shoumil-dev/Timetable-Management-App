@@ -14,6 +14,7 @@ const UserPage = () => {
   const [genderInput, setGenderInput] = useState("");
   const [birthdateInput, setBirthdateInput] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+  const [userRole, setUserRole] = useState("");
 
   useEffect(() => { 
     const fetchUserDetails = async () => {
@@ -80,6 +81,37 @@ const UserPage = () => {
     }
   };
 
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+        if (user && user.uid) {
+            loadUserRoleFromFirestore(user.uid);
+        } else {
+            setUserRole("");
+        }
+    });
+
+    return () => {
+        // Cleanup the subscription when the component is unmounted
+        unsubscribe();
+    };
+  }, []);
+
+  const loadUserRoleFromFirestore = async (userId) => {
+      const usersRef = collection(db, "users");
+      const userDocRef = doc(usersRef, userId);
+
+      try {
+        const userDocSnapshot = await getDoc(userDocRef);
+
+        if (userDocSnapshot.exists()) {
+          const role = userDocSnapshot.data().role || "";
+          setUserRole(role);
+        }
+      } catch (error) {
+        console.error("Error loading user role:", error);
+      }
+    };
+
   return (
     <div className="bg-white shadow-xl overflow-hidden">
       <header className="bg-black text-white text-center font-serif text-3xl py-6 border-b border-white">
@@ -93,8 +125,8 @@ const UserPage = () => {
             </Link>
           </li>
           <li><Link to="/Home" className="hover:text-gray-400">Home</Link></li>
-          <li><Link to="/Create" className="hover:text-gray-400">Create Unit</Link></li>
-          <li><Link to="/Select" className="hover:text-gray-400">Timeslot Allocation</Link></li>
+          {userRole === "student" && <li><a href="http://localhost:3000/Create" className="hover:text-gray-400">Create Unit</a></li>}
+          {userRole === "lecturer" && <li><a href="http://localhost:3000/Select" className="hover:text-gray-400">Timeslot allocation</a></li>}
           <li className="ml-auto"><Link to="/" className="hover:text-gray-400">Log Out</Link></li>
         </ul>
       </nav>
