@@ -81,15 +81,34 @@ const Home = () => {
         setShowNotification(false);
       };
 
+    const loadNotificationsFromFirestore = async (userId) => {
+        const usersRef = collection(db, "users");
+        const userDocRef = doc(usersRef, userId);
+    
+        try {
+          const userDocSnapshot = await getDoc(userDocRef);
+    
+          if (userDocSnapshot.exists()) {
+            const userNotifications = userDocSnapshot.data().notifications || [];
+            // Reverse the order of notifications
+            setNotifications(userNotifications.reverse());
+          }
+        } catch (error) {
+          console.error("Error loading notifications:", error);
+        }
+      };
+
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
             if (user && user.uid) {
                 // The user is signed in, you can fetch data here if needed
                 loadSelectedTimeslotsFromFirestore(user.uid);
+                loadNotificationsFromFirestore(user.uid);
             } else {
                 // The user is signed out
                 setSelectedTimeslots({});
                 setTimeTableDataAllocated([]);
+                setNotifications([]);
             }
         });
 
@@ -117,6 +136,7 @@ const Home = () => {
                     selectedTimeslotsData[unit] = [...(selectedTimeslotsData[unit] || []), timeSlot];
                     selectedLocationData[unit] = location;
                 });
+
                 setSelectedTimeslots(selectedTimeslotsData);
                 setSelectedLocation(selectedLocationData);
                 
@@ -237,14 +257,7 @@ const Home = () => {
                         <li className="ml-auto"><a href="http://localhost:3000/" className="hover:text-gray-400">Log Out</a></li>
                         <li><button onClick={handleNotificationButtonClick}><FontAwesomeIcon icon={faBell} /></button>
                             {showNotification && (
-                            <Notification
-                                notifications={[
-                                'FIT2004 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
-                                'FIT2005 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
-                                'FIT2006 Tutorial 12:00 - 14:00 has been changed to 14:00 - 16:00',
-                                ]}
-                                onClose={handleNotificationClose}
-                            />
+                            <Notification notifications={notifications} onClose={handleNotificationClose} />
                             )}
                         </li>
                     </ul>
