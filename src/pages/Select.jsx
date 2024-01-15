@@ -159,11 +159,6 @@ const Select = () => {
             </a>
           </li>
           <li>
-            <a href="http://localhost:3000/Create" className="hover:text-zinc-400">
-              Create Unit
-            </a>
-          </li>
-          <li>
             <a
               href="http://localhost:3000/Select"
               className="hover:text-zinc-400 bg-blue-500 text-white hover:bg-blue-600 p-4"

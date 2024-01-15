@@ -26,6 +26,7 @@ const Home = () => {
     const [timeTableDataAllocated, setTimeTableDataAllocated] = useState([]);
     const [showNotification, setShowNotification] = useState(false);
     const [notifications, setNotifications] = useState([]);
+    const [userRole, setUserRole] = useState("");
 
     const defaultColors = [
         '#4466ff',
@@ -104,11 +105,13 @@ const Home = () => {
                 // The user is signed in, you can fetch data here if needed
                 loadSelectedTimeslotsFromFirestore(user.uid);
                 loadNotificationsFromFirestore(user.uid);
+                loadUserRoleFromFirestore(user.uid);
             } else {
                 // The user is signed out
                 setSelectedTimeslots({});
                 setTimeTableDataAllocated([]);
                 setNotifications([]);
+                setUserRole("");
             }
         });
 
@@ -118,6 +121,21 @@ const Home = () => {
         };
     }, []);
 
+    const loadUserRoleFromFirestore = async (userId) => {
+        const usersRef = collection(db, "users");
+        const userDocRef = doc(usersRef, userId);
+    
+        try {
+          const userDocSnapshot = await getDoc(userDocRef);
+    
+          if (userDocSnapshot.exists()) {
+            const role = userDocSnapshot.data().role || "";
+            setUserRole(role);
+          }
+        } catch (error) {
+          console.error("Error loading user role:", error);
+        }
+      };
 
     const loadSelectedTimeslotsFromFirestore = async (userId) => {
         const usersRef = collection(db, "users");
@@ -252,8 +270,8 @@ const Home = () => {
                     <ul className="flex space-x-4">
                         <li><a href="http://localhost:3000/User" className="hover:text-gray-400"><FontAwesomeIcon icon={faUser} /></a></li>
                         <li><Link to="/Home" className="hover:text-gray-400 bg-blue-500 text-white hover:bg-blue-600 p-4">Home</Link></li>
-                        <li><a href="http://localhost:3000/Create" className="hover:text-gray-400">Create Unit</a></li>
-                        <li><a href="http://localhost:3000/Select" className="hover:text-gray-400">Timeslot allocation</a></li>
+                        {userRole === "student" && <li><a href="http://localhost:3000/Create" className="hover:text-gray-400">Create Unit</a></li>}
+                        {userRole === "lecturer" && <li><a href="http://localhost:3000/Select" className="hover:text-gray-400">Timeslot allocation</a></li>}
                         <li className="ml-auto"><a href="http://localhost:3000/" className="hover:text-gray-400">Log Out</a></li>
                         <li><button onClick={handleNotificationButtonClick}><FontAwesomeIcon icon={faBell} /></button>
                             {showNotification && (

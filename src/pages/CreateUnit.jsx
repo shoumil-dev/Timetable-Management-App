@@ -311,6 +311,7 @@ const CreateUnit = () => {
 
     fetchData();
   }, []);
+  
 
   const handleUnitClick = async (unit) => {
     const unitDoc = units.find((u) => u.title === unit);
@@ -389,14 +390,6 @@ const CreateUnit = () => {
               className="hover:text-zinc-400 bg-blue-500 text-white hover:bg-blue-600 p-4"
             >
               Create Unit
-            </a>
-          </li>
-          <li>
-            <a
-              href="http://localhost:3000/Select"
-              className="hover:text-zinc-400"
-            >
-              Timeslot allocation
             </a>
           </li>
           <li className="ml-auto">
