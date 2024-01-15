@@ -55,6 +55,10 @@ const Home = () => {
   const [isDarkMode, setIsDarkMode] = useState(
     window.matchMedia('(prefers-color-scheme: dark)').matches
   );
+
+  const handleEventClick = (args) => {
+    args.cancel = true; // Cancel the default behavior (opening the event popup)
+  };
   
 
   useEffect(() => {
@@ -206,17 +210,11 @@ const Home = () => {
 
     const eventTemplate = (props) => {
         return (
-            <div className="template-wrap" style={{ background: props.SecondaryColor, height: '100%', padding: '5px' }}>
-                <div className="subject" style={{ background: props.PrimaryColor, fontWeight: '600', fontSize: '16px' }}>
-                    {props.Subject}
-                </div>
-                <div className="time" style={{ background: props.PrimaryColor }}>
-                    Time: {getTimeString(props.StartTime)} - {getTimeString(props.EndTime)}
-                </div>
-                <div className="location" style={{ background: props.PrimaryColor }}>
-                    Location: {props.Location || 'No location specified'}
-                </div>
-            </div>
+        <div className="template-wrap" style={{ background: props.SecondaryColor, paddingBottom:'200%' }} >
+            <div className="subject" style={{ background: props.PrimaryColor, width: '120%', marginLeft:'-10px', paddingBottom:'10px', fontWeight:'600', fontSize:'16px' }}>{props.Subject}</div>
+            <div className="time" style={{ background: props.PrimaryColor, width: '120%', marginLeft:'-10px' }}> Time: {getTimeString(props.StartTime)} - {getTimeString(props.EndTime)}</div>
+            <div className="event-description" style={{ background: props.PrimaryColor, width: '120%', marginLeft:'-10px' }}> Location: {props.Location}</div>
+        </div>
         );
     };
     
@@ -253,7 +251,7 @@ const Home = () => {
                 </nav>
             </div>
             <ScheduleComponent eventSettings={{ dataSource: timeTableDataAllocated}}  
-            currentView="WorkWeek" height='825px'      
+            currentView="WorkWeek" height='825px' eventClick={handleEventClick} popupOpen={handleEventClick} // This prevents the default behavior      
             >
                 <ViewsDirective >
                     <ViewDirective option='Day' startHour="08:00" endHour="21:00" interval={2} displayName="2 Days"></ViewDirective>
