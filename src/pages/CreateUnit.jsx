@@ -130,6 +130,29 @@ const CreateUnit = () => {
 
         console.log("Updated timeSlots:", updatedTimeSlots);
 
+        // Update the 'slots' field in the user document for each user
+        const updatedUsers = users.map((user) => {
+          if (!user.slots) {
+            user.slots = []; // Initialize slots as an empty array if it doesn't exist
+          }
+          user.slots.push({
+            unit: selectedUnit.title,
+            timeSlot: newTimeSlot.trim(),
+            location: "",  // Add location if needed
+          });
+          return user;
+        });
+
+        // Update the users locally
+        setUsers(updatedUsers);
+
+        // Update the documents in Firestore for all users
+        const updateUsersPromises = updatedUsers.map(async (user) => {
+          const userDocRef = doc(collection(db, "users"), user.userId);
+          await updateDoc(userDocRef, { slots: user.slots });
+        });
+        await Promise.all(updateUsersPromises);
+
         // Fetch the updated data from Firestore and log it
         const updatedData = await fetchUpdatedData();
         console.log("Updated data from Firestore:", updatedData);
