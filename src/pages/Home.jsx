@@ -28,33 +28,27 @@ const Home = () => {
     const [notifications, setNotifications] = useState([]);
 
     const defaultColors = [
-        '#FF5733',
-        '#5300ff',
+        '#4466ff',
+        '#cc00dd',
         '#36A2EB',
-        '#4CAF50',
-        '#ff9680',
-        '#ff80aa',
-        '#aaff80',
-        '#ddffcd',
-        '#a67100',
-        '#0088a6',
-        '#88a600',
-        '#a61e00',
+        '#008855',
+        '#aa6600',
+        '#dd3322',
+        '#dd3344',
+        '#cc4466',
+        '#7755ff',
     ];
 
     const secondColors = [
-        '#FFA895',
-        '#9562ff',
-        '#8fcbf4',
-        '#aadaac',
-        '#ffc7bb',
-        '#ffbbd1',
-        '#aaff80',
-        '#d1ffbb',
-        '#ffca58',
-        '#6be4ff',
-        '#daff30',
-        '#ff6644',
+        '#4466ff',
+        '#cc00dd',
+        '#36A2EB',
+        '#008855',
+        '#aa6600',
+        '#dd3322',
+        '#dd3344',
+        '#cc4466',
+        '#7755ff',
     ];
   // ... other component code
 
