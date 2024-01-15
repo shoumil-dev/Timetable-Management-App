@@ -35,6 +35,7 @@ const CreateUnit = () => {
 
   const [users, setUsers] = useState([]);
   const [slots, setSlots] = useState([]);
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -165,10 +166,12 @@ const CreateUnit = () => {
   const handleEditTimeSlot = async () => {
     if (selectedUnit && selectedUnit.id && editedTimeSlot.trim() !== "") {
       try {
+        const oriTimeslot = selectedTimeslot.timeSlot + "";
+        console.log("oriTimeslot: ", oriTimeslot)
         const updatedTimeSlots = [...timeSlots];
 
         const slotCollection = collection(db, 'slots');
-        //console.log(selectedTimeslot)
+        console.log(selectedTimeslot)
 
         //console.log("selectedUnit.title:", selectedUnit.title);
         //console.log("selectedTimeslot.timeSlot:", selectedTimeslot.timeSlot);
@@ -186,7 +189,7 @@ const CreateUnit = () => {
         if (!slotSnapshot.empty) {
           console.log("Inside if statement");
           const slotDocRef = slotSnapshot.docs[0].ref;
-        console.log(selectedTimeslot)
+        //console.log(selectedTimeslot)
 
         const updatedSlots = slots.map((slot) => {
           if (slot.timeSlot) {
@@ -210,7 +213,7 @@ const CreateUnit = () => {
           location: editedLocation.trim(),
           notification: [
             ...notificationArray,
-            `${selectedUnit.title} ${editedTimeSlot.trim()} has been changed to ${editedTimeSlot.trim()}.`,
+            `${selectedUnit.title} ${selectedTimeslot.timeSlot.trim()} has been changed to ${editedTimeSlot.trim()}.`,
           ],
         });
       }
@@ -225,8 +228,13 @@ const CreateUnit = () => {
               ) {
                 user.slots[index].timeSlot = editedTimeSlot.trim();
                 user.slots[index].location = editedLocation.trim();
+
+                const notificationMessage = `${selectedUnit.title} ${oriTimeslot} has been changed to ${editedTimeSlot.trim()}.`;
+                user.notifications = user.notifications || [];
+                user.notifications.push(notificationMessage);
               }
             });
+            user.notifications = (user.notifications || []).filter(Boolean);
           }
           return user;
         });
@@ -237,14 +245,14 @@ const CreateUnit = () => {
         // Update the documents in Firestore for all users
         const updateUsersPromises = updatedUsers.map(async (user) => {
           const userDocRef = doc(collection(db, "users"), user.userId);
-          await updateDoc(userDocRef, 
-            { slots: user.slots 
-            });
+          console.log("updateuserpromises line244")
+          await updateDoc(userDocRef, { slots: user.slots, notifications: user.notifications });
         });
         await Promise.all(updateUsersPromises);
         
         updatedTimeSlots[editedTimeSlotIndex] = editedTimeSlot.trim();
         const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
+        console.log("line251")
         await updateDoc(unitDocRef, { 
           timeslot: updatedTimeSlots});
 
