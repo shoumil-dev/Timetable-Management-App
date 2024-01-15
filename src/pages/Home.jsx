@@ -222,13 +222,6 @@ const Home = () => {
                 <div className="location" style={{ background: props.PrimaryColor }}>
                     Location: {props.Location || 'No location specified'}
                 </div>
-                {/* Add the unit and timeslot information */}
-                <div className="unit" style={{ background: props.PrimaryColor }}>
-                    Unit: {props.Subject.split(' - ')[0]}
-                </div>
-                <div className="timeslot" style={{ background: props.PrimaryColor }}>
-                    Timeslot: {props.Subject.split(' - ')[1]}
-                </div>
             </div>
         );
     };
