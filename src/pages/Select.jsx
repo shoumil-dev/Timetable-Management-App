@@ -102,6 +102,15 @@ const Select = () => {
           (slot) => slot.unit === selectedUnit && slot.timeSlot === timeSlot
         );
 
+        const hasTimeSlotClash = existingSlots.some(
+          (slot) => slot.unit === selectedUnit && slot.timeSlot !== timeSlot && slot.timeSlot.includes(timeSlot)
+        );
+  
+        if (hasTimeSlotClash) {
+          alert("Time slot clash! Please choose a different time slot.");
+          return;
+        }
+
         const confirmed = window.confirm(
           `You are about to ${isAlreadySelected ? 'deselect' : 'select'} ${timeSlot} for ${selectedUnit}. Do you want to proceed?`
         );

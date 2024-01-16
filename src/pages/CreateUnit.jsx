@@ -59,6 +59,34 @@ const CreateUnit = () => {
   useEffect(() => {
     const fetchData = async () => {
       const unitsCollection = collection(db, "units");
+      const snapshot = onSnapshot(unitsCollection, (snapshot) => {
+        const unitData = snapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+        setUnits(unitData);
+      });
+    };
+    fetchData();
+  }, [selectedUnit]);
+
+  const filterUnitsBySlots = () => {
+    // Filter units based on the user's slots
+    const userSlots = selectedUnit.slots || [];
+    const filteredUnits = units.filter((unit) =>
+      userSlots.some((slot) => slot.unit === unit.title)
+    );
+  
+    setUnits(filteredUnits);
+  };
+  
+  useEffect(() => {
+    filterUnitsBySlots();
+  }, [selectedUnit]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const unitsCollection = collection(db, "units");
       // const snapshot = await getDocs(unitsCollection);
 
       // const unitData = snapshot.docs.map((doc) => doc.data());
@@ -172,6 +200,7 @@ const CreateUnit = () => {
 
   const handleEditTimeSlotClick = (timeSlot, index) => {
     console.log("Edit timeslot button clicked"); // Check if this is logged
+    
     setEditedTimeSlot(timeSlot);
     setEditedTimeSlotIndex(index);
 
