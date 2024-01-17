@@ -20,6 +20,13 @@ const SignUp = () => {
   const signUp = async (e) => {
     e.preventDefault();
 
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      setError("Password must be at least 8 characters and contain both letters and numbers.");
+      return;
+    }
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const userRole = status === "lecturer" ? "lecturer" : "student";
