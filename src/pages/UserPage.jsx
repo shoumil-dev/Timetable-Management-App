@@ -118,7 +118,7 @@ const UserPage = () => {
         Time Table Monash
       </header>
       <nav className="bg-black text-white p-4">
-        <ul className="flex space-x-4">
+        <ul className="flex space-x-4"> 
           <li>
             <Link to="/Home" className="hover:text-gray-400 bg-blue-500 text-white hover:bg-blue-600 p-4">
               <FontAwesomeIcon icon={faUserEdit} />

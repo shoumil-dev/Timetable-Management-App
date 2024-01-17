@@ -14,6 +14,7 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState(""); // Add status state for admin/lecturer/student
+  const [name, setName] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -37,6 +38,7 @@ const SignUp = () => {
         userId,
         email,
         role: userRole,
+        name,
       });
 
       // Display a toast notification
@@ -85,6 +87,28 @@ const SignUp = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  className="block w-full rounded-full border-0 py-1.5 text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-zinc-900 sm:text-sm sm:leading-6
+                  dark:text-white dark:bg-zinc-900 dark:focus:ring-zinc-50"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium leading-6 text-zinc-900 dark:text-white"
+              >
+                Full Name
+              </label>
+              <div className="mt-2">
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  autoComplete="name"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   className="block w-full rounded-full border-0 py-1.5 text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-zinc-900 sm:text-sm sm:leading-6
                   dark:text-white dark:bg-zinc-900 dark:focus:ring-zinc-50"
                 />
