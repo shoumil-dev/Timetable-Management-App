@@ -15,8 +15,13 @@ const UserPage = () => {
   const [birthdateInput, setBirthdateInput] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [userRole, setUserRole] = useState("");
+  const [isNavbarVisible, setIsNavbarVisible] = useState(true);
 
-  useEffect(() => { 
+  const toggleNavbarVisibility = () => {
+    setIsNavbarVisible(!isNavbarVisible);
+  };
+
+  useEffect(() => {
     const fetchUserDetails = async () => {
       try {
         const userDocRef = doc(collection(db, "users"), auth.currentUser.uid);
@@ -55,7 +60,7 @@ const UserPage = () => {
       console.error("Error updating gender:", error);
     }
   };
-  
+
   const handleBirthdateSubmit = async () => {
     try {
       const userDocRef = doc(collection(db, "users"), auth.currentUser.uid);
@@ -83,53 +88,55 @@ const UserPage = () => {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-        if (user && user.uid) {
-            loadUserRoleFromFirestore(user.uid);
-        } else {
-            setUserRole("");
-        }
+      if (user && user.uid) {
+        loadUserRoleFromFirestore(user.uid);
+      } else {
+        setUserRole("");
+      }
     });
 
     return () => {
-        // Cleanup the subscription when the component is unmounted
-        unsubscribe();
+      // Cleanup the subscription when the component is unmounted
+      unsubscribe();
     };
   }, []);
 
   const loadUserRoleFromFirestore = async (userId) => {
-      const usersRef = collection(db, "users");
-      const userDocRef = doc(usersRef, userId);
+    const usersRef = collection(db, "users");
+    const userDocRef = doc(usersRef, userId);
 
-      try {
-        const userDocSnapshot = await getDoc(userDocRef);
+    try {
+      const userDocSnapshot = await getDoc(userDocRef);
 
-        if (userDocSnapshot.exists()) {
-          const role = userDocSnapshot.data().role || "";
-          setUserRole(role);
-        }
-      } catch (error) {
-        console.error("Error loading user role:", error);
+      if (userDocSnapshot.exists()) {
+        const role = userDocSnapshot.data().role || "";
+        setUserRole(role);
       }
-    };
+    } catch (error) {
+      console.error("Error loading user role:", error);
+    }
+  };
 
   return (
     <div className="bg-white shadow-xl overflow-hidden">
-      <header className="bg-black text-white text-center font-serif text-3xl py-6 border-b border-white">
-        Time Table Monash
+      <header className="bg-black text-white text-center font-serif text-3xl py-3 border-b border-white dark:border-zinc-900 flex justify-center items-center">
+        <img src="monash.png" className="h-14" alt="Monash University Logo" />
       </header>
-      <nav className="bg-black text-white p-4">
-        <ul className="flex space-x-4"> 
-          <li>
-            <Link to="/Home" className="hover:text-gray-400 bg-blue-500 text-white hover:bg-blue-600 p-4">
-              <FontAwesomeIcon icon={faUserEdit} />
-            </Link>
-          </li>
-          <li><Link to="/Home" className="hover:text-gray-400">Home</Link></li>
-          {userRole === "lecturer" && <li><a href="http://localhost:3000/Create" className="hover:text-gray-400">Create Unit</a></li>}
-          {userRole === "student" && <li><a href="http://localhost:3000/Select" className="hover:text-gray-400">Timeslot allocation</a></li>}
-          <li className="ml-auto"><Link to="/" className="hover:text-gray-400">Log Out</Link></li>
-        </ul>
-      </nav>
+      {isNavbarVisible && (
+        <nav className="bg-black text-white p-4">
+          <ul className="flex space-x-4">
+            <li>
+              <Link to="/Home" className="hover:text-gray-400 bg-blue-500 text-white hover:bg-blue-600 p-4">
+                <FontAwesomeIcon icon={faUserEdit} />
+              </Link>
+            </li>
+            <li><Link to="/Home" className="hover:text-gray-400">Home</Link></li>
+            {userRole === "lecturer" && <li><a href="http://localhost:3000/Create" className="hover:text-gray-400">Create Unit</a></li>}
+            {userRole === "student" && <li><a href="http://localhost:3000/Select" className="hover:text-gray-400">Timeslot allocation</a></li>}
+            <li className="ml-auto"><Link to="/" className="hover:text-gray-400">Log Out</Link></li>
+          </ul>
+        </nav>
+      )}
 
       <div className="m-4" >
         <h2 className="text-3xl font-bold mb-4">User Details</h2>
@@ -162,7 +169,7 @@ const UserPage = () => {
                     {userDetails.name ? "Edit" : "Add"}
                   </button>
                 </div>
-              )} 
+              )}
             </div>
 
             <div className="text-gray-700 font-bold text-lg">Email:</div>
@@ -196,75 +203,89 @@ const UserPage = () => {
             </div>
 
             <div className="text-gray-700 font-bold text-lg">Gender:</div>
-          <div className="flex items-center">
-            {isEditing ? (
-              <div>
-                <select
-                  value={genderInput}
-                  onChange={(e) => setGenderInput(e.target.value)}
-                  className="border-2 border-gray-500 rounded-md p-2 text-lg"
-                >
-                  <option value="">Select Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
-                <button
-                  onClick={handleGenderSubmit}
-                  className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded ml-2"
-                >
-                  Save
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center">
-                <p className="text-gray-600 text-lg">{userDetails.gender || "Gender not set"}</p>
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded ml-2"
-                >
-                  {userDetails.gender ? "Edit" : "Add"}
-                </button>
-              </div>
-            )}
-          </div>
+            <div className="flex items-center">
+              {isEditing ? (
+                <div>
+                  <select
+                    value={genderInput}
+                    onChange={(e) => setGenderInput(e.target.value)}
+                    className="border-2 border-gray-500 rounded-md p-2 text-lg"
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <button
+                    onClick={handleGenderSubmit}
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded ml-2"
+                  >
+                    Save
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center">
+                  <p className="text-gray-600 text-lg">{userDetails.gender || "Gender not set"}</p>
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded ml-2"
+                  >
+                    {userDetails.gender ? "Edit" : "Add"}
+                  </button>
+                </div>
+              )}
+            </div>
 
-          <div className="text-gray-700 font-bold text-lg">Birthdate:</div>
-          <div className="flex items-center">
-            {isEditing ? (
-              <div>
-                <input
-                  type="date"
-                  value={birthdateInput}
-                  onChange={(e) => setBirthdateInput(e.target.value)}
-                  className="border-2 border-gray-500 rounded-md p-2 text-lg"
-                />
-                <button
-                  onClick={handleBirthdateSubmit}
-                  className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded ml-2"
-                >
-                  Save
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center">
-                <p className="text-gray-600 text-lg">{userDetails.birthdate || "Birthdate not set"}</p>
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded ml-2"
-                >
-                  {userDetails.birthdate ? "Edit" : "Add"}
-                </button>
-              </div>
-            )}
-          </div>
+            <div className="text-gray-700 font-bold text-lg">Birthdate:</div>
+            <div className="flex items-center">
+              {isEditing ? (
+                <div>
+                  <input
+                    type="date"
+                    value={birthdateInput}
+                    onChange={(e) => setBirthdateInput(e.target.value)}
+                    className="border-2 border-gray-500 rounded-md p-2 text-lg"
+                  />
+                  <button
+                    onClick={handleBirthdateSubmit}
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded ml-2"
+                  >
+                    Save
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center">
+                  <p className="text-gray-600 text-lg">{userDetails.birthdate || "Birthdate not set"}</p>
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded ml-2"
+                  >
+                    {userDetails.birthdate ? "Edit" : "Add"}
+                  </button>
+                </div>
+              )}
+            </div>
 
-          
+
           </div>
         ) : (
           <p>Loading user details...</p>
         )}
-      </div> 
+      </div>
+      <div className="absolute top-4 right-4">
+        <label
+          htmlFor="toggleNavbar"
+          className="text-white ms-2 text-sm font-medium">
+          Show Menu
+        </label>
+        <input
+          type="checkbox"
+          id="toggleNavbar"
+          checked={isNavbarVisible}
+          onChange={toggleNavbarVisibility}
+          className="m-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+        />
+      </div>
     </div>
   );
 };

@@ -29,13 +29,18 @@ const CreateUnit = () => {
   const [isAddTimeSlotModalOpen, setIsAddTimeSlotModalOpen] = useState(false);
   const [editedTimeSlot, setEditedTimeSlot] = useState("");
   const [editedLocation, setEditedLocation] = useState("");
+  const [isNavbarVisible, setIsNavbarVisible] = useState(true);
 
   const [isEditTimeSlotModalOpen, setIsEditTimeSlotModalOpen] = useState(false);
   const [editedTimeSlotIndex, setEditedTimeSlotIndex] = useState(null);
 
   const [users, setUsers] = useState([]);
   const [slots, setSlots] = useState([]);
-  
+
+  const toggleNavbarVisibility = () => {
+    setIsNavbarVisible(!isNavbarVisible);
+  };
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,7 +58,7 @@ const CreateUnit = () => {
     };
     fetchData();
 
-    
+
   }, [selectedUnit]);
 
   useEffect(() => {
@@ -76,10 +81,10 @@ const CreateUnit = () => {
     const filteredUnits = units.filter((unit) =>
       userSlots.some((slot) => slot.unit === unit.title)
     );
-  
+
     setUnits(filteredUnits);
   };
-  
+
   useEffect(() => {
     filterUnitsBySlots();
   }, [selectedUnit]);
@@ -96,7 +101,8 @@ const CreateUnit = () => {
           ...doc.data(),
           id: doc.id,
         }));
-      setUnits(unitData);});
+        setUnits(unitData);
+      });
     };
     fetchData();
   }, [selectedUnit]);
@@ -200,7 +206,7 @@ const CreateUnit = () => {
 
   const handleEditTimeSlotClick = (timeSlot, index) => {
     console.log("Edit timeslot button clicked"); // Check if this is logged
-    
+
     setEditedTimeSlot(timeSlot);
     setEditedTimeSlotIndex(index);
 
@@ -208,10 +214,10 @@ const CreateUnit = () => {
       (slot) => slot.unit === selectedUnit.title && slot.timeSlot === timeSlot
     );
     setSelectedTimeslot(selectedTimeslotData);
-    
-    console.log("selected data: ",selectedTimeslotData)
+
+    console.log("selected data: ", selectedTimeslotData)
     console.log("selected timeslot: ", selectedTimeslot)
-    
+
     setIsEditTimeSlotModalOpen(true);
   };
 
@@ -227,48 +233,48 @@ const CreateUnit = () => {
 
         //console.log("selectedUnit.title:", selectedUnit.title);
         //console.log("selectedTimeslot.timeSlot:", selectedTimeslot.timeSlot);
-        
+
         const slotQuery = query(
           slotCollection,
           where('unit', '==', selectedUnit.title),
           where('timeSlot', '==', selectedTimeslot.timeSlot)
         );
         //console.log("Slot Query:", slotQuery);
-        
+
         const slotSnapshot = await getDocs(slotQuery);
         //console.log("Slot Snapshot:", slotSnapshot.docs);
-        
+
         if (!slotSnapshot.empty) {
           console.log("Inside if statement");
           const slotDocRef = slotSnapshot.docs[0].ref;
-        //console.log(selectedTimeslot)
+          //console.log(selectedTimeslot)
 
-        const updatedSlots = slots.map((slot) => {
-          if (slot.timeSlot) {
-            if (
+          const updatedSlots = slots.map((slot) => {
+            if (slot.timeSlot) {
+              if (
                 slot.unit === selectedUnit.title
               ) {
                 slot.timeSlot = editedTimeSlot.trim();
                 slot.location = editedLocation.trim();
               };
-          }
-          return slot;
-        });
-        setSlots(updatedSlots)
-      
-        // Update the notification field in the same slot document
-        const slotData = slotSnapshot.docs[0].data();
-        const notificationArray = slotData.notification || [];
-      
-        await updateDoc(slotDocRef, {
-          timeSlot: editedTimeSlot.trim(),
-          location: editedLocation.trim(),
-          notification: [
-            ...notificationArray,
-            `${selectedUnit.title} ${selectedTimeslot.timeSlot.trim()} has been changed to ${editedTimeSlot.trim()}.`,
-          ],
-        });
-      }
+            }
+            return slot;
+          });
+          setSlots(updatedSlots)
+
+          // Update the notification field in the same slot document
+          const slotData = slotSnapshot.docs[0].data();
+          const notificationArray = slotData.notification || [];
+
+          await updateDoc(slotDocRef, {
+            timeSlot: editedTimeSlot.trim(),
+            location: editedLocation.trim(),
+            notification: [
+              ...notificationArray,
+              `${selectedUnit.title} ${selectedTimeslot.timeSlot.trim()} has been changed to ${editedTimeSlot.trim()}.`,
+            ],
+          });
+        }
 
         // Loop through each user and update the corresponding timeSlot
         const updatedUsers = users.map((user) => {
@@ -301,12 +307,13 @@ const CreateUnit = () => {
           await updateDoc(userDocRef, { slots: user.slots, notifications: user.notifications });
         });
         await Promise.all(updateUsersPromises);
-        
+
         updatedTimeSlots[editedTimeSlotIndex] = editedTimeSlot.trim();
         const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
         console.log("line251")
-        await updateDoc(unitDocRef, { 
-          timeslot: updatedTimeSlots});
+        await updateDoc(unitDocRef, {
+          timeslot: updatedTimeSlots
+        });
 
         // Show success notification
         toast.success("Timeslot has been edited successfully!");
@@ -363,7 +370,7 @@ const CreateUnit = () => {
 
     fetchData();
   }, []);
-  
+
 
   const handleUnitClick = async (unit) => {
     const unitDoc = units.find((u) => u.title === unit);
@@ -415,42 +422,44 @@ const CreateUnit = () => {
 
   return (
     <div className="bg-white shadow-xl overflow-hidden">
-      <header className="bg-black text-white text-center font-serif text-3xl py-6 border-b border-white">
-        Time Table Monash
+      <header className="bg-black text-white text-center font-serif text-3xl py-3 border-b border-white dark:border-zinc-900 flex justify-center items-center">
+        <img src="monash.png" className="h-14" alt="Monash University Logo" />
       </header>
-      <nav className="bg-black text-white p-4">
-        <ul className="flex space-x-4">
-          <li>
-            <a
-              href="http://localhost:3000/User"
-              className="hover:text-zinc-400"
-            >
-              <FontAwesomeIcon icon={faUser} />
-            </a>
-          </li>
-          <li>
-            <a
-              href="http://localhost:3000/Home"
-              className="hover:text-zinc-400"
-            >
-              Home
-            </a>
-          </li>
-          <li>
-            <a
-              href="http://localhost:3000/Create"
-              className="hover:text-zinc-400 bg-blue-500 text-white hover:bg-blue-600 p-4"
-            >
-              Create Unit
-            </a>
-          </li>
-          <li className="ml-auto">
-            <a href="http://localhost:3000/" className="hover:text-zinc-400">
-              Log Out
-            </a>
-          </li>
-        </ul>
-      </nav>
+      {isNavbarVisible && (
+        <nav className="bg-black text-white p-4">
+          <ul className="flex space-x-4">
+            <li>
+              <a
+                href="http://localhost:3000/User"
+                className="hover:text-zinc-400"
+              >
+                <FontAwesomeIcon icon={faUser} />
+              </a>
+            </li>
+            <li>
+              <a
+                href="http://localhost:3000/Home"
+                className="hover:text-zinc-400"
+              >
+                Home
+              </a>
+            </li>
+            <li>
+              <a
+                href="http://localhost:3000/Create"
+                className="hover:text-zinc-400 bg-blue-500 text-white hover:bg-blue-600 p-4"
+              >
+                Create Unit
+              </a>
+            </li>
+            <li className="ml-auto">
+              <a href="http://localhost:3000/" className="hover:text-zinc-400">
+                Log Out
+              </a>
+            </li>
+          </ul>
+        </nav>
+      )}
 
       <div className="flex h-screen dark:bg-zinc-900 text-black dark:text-white">
         <div className="overflow-auto ring-2 ring-zinc-300 w-1/5 rounded-2xl text-xl mr-4 m-20 text-center">
@@ -461,9 +470,8 @@ const CreateUnit = () => {
           {units.map((unit) => (
             <div
               key={unit.title}
-              className={`p-8 hover:bg-black dark:hover:bg-blue-500 hover:text-white border-b-2 ${
-                selectedUnit?.title === unit.title ? "bg-black text-white dark:bg-blue-500" : ""
-              }`}
+              className={`p-8 hover:bg-black dark:hover:bg-blue-500 hover:text-white border-b-2 ${selectedUnit?.title === unit.title ? "bg-black text-white dark:bg-blue-500" : ""
+                }`}
             >
               <button onClick={() => handleUnitClick(unit.title)}>
                 {unit.title}
@@ -609,6 +617,20 @@ const CreateUnit = () => {
         draggable
         pauseOnHover
       />
+      <div className="absolute top-4 right-4">
+        <label
+          htmlFor="toggleNavbar"
+          className="text-white ms-2 text-sm font-medium">
+          Show Menu
+        </label>
+        <input
+          type="checkbox"
+          id="toggleNavbar"
+          checked={isNavbarVisible}
+          onChange={toggleNavbarVisibility}
+          className="m-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+        />
+      </div>
     </div>
   );
 };

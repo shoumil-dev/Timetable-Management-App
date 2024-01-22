@@ -1,5 +1,5 @@
 // Home.jsx
-import React, { useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { db } from "../firebase-handler";
 import { Link } from 'react-router-dom';
 import { doc, collection, getDoc } from "firebase/firestore";
@@ -55,28 +55,28 @@ const Home = () => {
         '#cc4466',
         '#7755ff',
     ];
-  // ... other component code
+    // ... other component code
 
-  const [isDarkMode, setIsDarkMode] = useState(
-    window.matchMedia('(prefers-color-scheme: dark)').matches
-  );
+    const [isDarkMode, setIsDarkMode] = useState(
+        window.matchMedia('(prefers-color-scheme: dark)').matches
+    );
 
-  const handleEventClick = (args) => {
-    args.cancel = true; // Cancel the default behavior (opening the event popup)
-  };
-  
-
-  useEffect(() => {
-    const handleMediaQueryChange = () => {
-      setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const handleEventClick = (args) => {
+        args.cancel = true; // Cancel the default behavior (opening the event popup)
     };
 
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    mediaQuery.addEventListener('change', handleMediaQueryChange);
 
-    return
- 
-  }, []);
+    useEffect(() => {
+        const handleMediaQueryChange = () => {
+            setIsDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
+        };
+
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        mediaQuery.addEventListener('change', handleMediaQueryChange);
+
+        return
+
+    }, []);
 
     const handleNotificationButtonClick = () => {
         setShowNotification(true);
@@ -84,24 +84,24 @@ const Home = () => {
 
     const handleNotificationClose = () => {
         setShowNotification(false);
-      };
+    };
 
     const loadNotificationsFromFirestore = async (userId) => {
         const usersRef = collection(db, "users");
         const userDocRef = doc(usersRef, userId);
-    
+
         try {
-          const userDocSnapshot = await getDoc(userDocRef);
-    
-          if (userDocSnapshot.exists()) {
-            const userNotifications = userDocSnapshot.data().notifications || [];
-            // Reverse the order of notifications
-            setNotifications(userNotifications.reverse());
-          }
+            const userDocSnapshot = await getDoc(userDocRef);
+
+            if (userDocSnapshot.exists()) {
+                const userNotifications = userDocSnapshot.data().notifications || [];
+                // Reverse the order of notifications
+                setNotifications(userNotifications.reverse());
+            }
         } catch (error) {
-          console.error("Error loading notifications:", error);
+            console.error("Error loading notifications:", error);
         }
-      };
+    };
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -128,18 +128,18 @@ const Home = () => {
     const loadUserRoleFromFirestore = async (userId) => {
         const usersRef = collection(db, "users");
         const userDocRef = doc(usersRef, userId);
-    
+
         try {
-          const userDocSnapshot = await getDoc(userDocRef);
-    
-          if (userDocSnapshot.exists()) {
-            const role = userDocSnapshot.data().role || "";
-            setUserRole(role);
-          }
+            const userDocSnapshot = await getDoc(userDocRef);
+
+            if (userDocSnapshot.exists()) {
+                const role = userDocSnapshot.data().role || "";
+                setUserRole(role);
+            }
         } catch (error) {
-          console.error("Error loading user role:", error);
+            console.error("Error loading user role:", error);
         }
-      };
+    };
 
     const loadSelectedTimeslotsFromFirestore = async (userId) => {
         const usersRef = collection(db, "users");
@@ -161,7 +161,7 @@ const Home = () => {
 
                 setSelectedTimeslots(selectedTimeslotsData);
                 setSelectedLocation(selectedLocationData);
-                
+
             }
         } catch (error) {
             console.error("Error loading selected timeslots:", error);
@@ -182,7 +182,7 @@ const Home = () => {
         for (const unit in selectedTimeslots) {
             if (selectedTimeslots.hasOwnProperty(unit)) {
                 const timeSlots = selectedTimeslots[unit];
-                convertedData = [...convertedData, ...parseTimeSlots(timeSlots, unit)];                
+                convertedData = [...convertedData, ...parseTimeSlots(timeSlots, unit)];
             }
         }
         // Assign a primary color to each event from the defaultColors array
@@ -202,23 +202,23 @@ const Home = () => {
                 console.error('Invalid time slot:', timeSlot);
                 return null; // Skip this iteration if timeSlot is invalid
             }
-    
+
             // Split the time slot into day, subject, and time range
             const [day, subject, ...rest] = timeSlot.split(' ');
             const timeRange = rest.join(' ');
-    
+
             // Extract start and end times from the time range
             const timeRangeParts = timeRange.split('-');
-    
+
             // Check if both start and end times are available
             if (timeRangeParts.length !== 2) {
                 console.error('Invalid time range:', timeRange);
                 return null; // Skip this iteration if time range is invalid
             }
-    
+
             const startTime = timeRangeParts[0];
             const endTime = timeRangeParts[1];
-    
+
             // Get the date based on the day of the week
             const currentDate = new Date();
             currentDate.setMonth(currentDate.getMonth() - 1);
@@ -227,13 +227,13 @@ const Home = () => {
             const startDateTime = new Date(currentDate);
             startDateTime.setDate(currentDate.getDate() + (dayIndex - currentDate.getDay() + 7) % 7);
             startDateTime.setHours(parseInt(startTime.split(':')[0], 10), parseInt(startTime.split(':')[1], 10), 0);
-    
+
             const endDateTime = new Date(startDateTime);
             endDateTime.setHours(parseInt(endTime.split(':')[0], 10), parseInt(endTime.split(':')[1], 10), 0);
-    
+
             // Add recurrence rule
             const recurrenceRule = `FREQ=WEEKLY; INTERVAL=1; BYDAY=${day.toUpperCase().substring(0, 2)};`;
-    
+
             return {
                 Subject: `${unit} - ${subject}`,
                 StartTime: startDateTime,
@@ -243,7 +243,7 @@ const Home = () => {
             };
         }).filter(item => item !== null); // Remove null entries from the array
     };
-    
+
 
     let instance = new Internationalization();
     const getTimeString = (value) => {
@@ -252,24 +252,25 @@ const Home = () => {
 
     const eventTemplate = (props) => {
         return (
-        <div className="template-wrap" style={{ background: props.SecondaryColor, paddingBottom:'200%' }} >
-            <div className="subject" style={{ background: props.PrimaryColor, width: '120%', marginLeft:'-10px', paddingBottom:'10px', fontWeight:'600', fontSize:'16px' }}>{props.Subject}</div>
-            <div className="time" style={{ background: props.PrimaryColor, width: '120%', marginLeft:'-10px' }}> Time: {getTimeString(props.StartTime)} - {getTimeString(props.EndTime)}</div>
-            <div className="event-description" style={{ background: props.PrimaryColor, width: '120%', marginLeft:'-10px' }}> Location: {props.Location}</div>
-        </div>
+            <div className="template-wrap" style={{ background: props.SecondaryColor, paddingBottom: '200%' }} >
+                <div className="subject" style={{ background: props.PrimaryColor, width: '120%', marginLeft: '-10px', paddingBottom: '10px', fontWeight: '600', fontSize: '16px' }}>{props.Subject}</div>
+                <div className="time" style={{ background: props.PrimaryColor, width: '120%', marginLeft: '-10px' }}> Time: {getTimeString(props.StartTime)} - {getTimeString(props.EndTime)}</div>
+                <div className="event-description" style={{ background: props.PrimaryColor, width: '120%', marginLeft: '-10px' }}> Location: {props.Location}</div>
+            </div>
         );
     };
-    
-    
-    
+
+
+
 
 
     return (
-        <div className="dark:bg-zinc-900 h-screen"  class={isDarkMode ? 'e-dark-mode' : ''}>
+        <div className="dark:bg-zinc-900 h-screen" class={isDarkMode ? 'e-dark-mode' : ''}>
             <div className="bg-white dark:bg-zinc-900 shadow-xl overflow-hidden">
-                <header className="bg-black text-white text-center font-serif text-3xl py-6 border-b border-white dark:border-zinc-900">
-                    Time Table Monash
+                <header className="bg-black text-white text-center font-serif text-3xl py-3 border-b border-white dark:border-zinc-900 flex justify-center items-center">
+                    <img src="monash.png" className="h-14" alt="Monash University Logo" />
                 </header>
+
                 {isNavbarVisible && (
                     <nav className="bg-black text-white p-4">
                         <ul className="flex space-x-4">
@@ -280,31 +281,31 @@ const Home = () => {
                             <li className="ml-auto"><a href="http://localhost:3000/" className="hover:text-gray-400">Log Out</a></li>
                             <li><button onClick={handleNotificationButtonClick}><FontAwesomeIcon icon={faBell} /></button>
                                 {showNotification && (
-                                <Notification notifications={notifications} onClose={handleNotificationClose} />
+                                    <Notification notifications={notifications} onClose={handleNotificationClose} />
                                 )}
                             </li>
                         </ul>
                     </nav>
                 )}
             </div>
-            <ScheduleComponent eventSettings={{ dataSource: timeTableDataAllocated}}  
-            currentView="WorkWeek" height='825px' eventClick={handleEventClick} popupOpen={handleEventClick} // This prevents the default behavior      
+            <ScheduleComponent eventSettings={{ dataSource: timeTableDataAllocated }}
+                currentView="WorkWeek" height='825px' eventClick={handleEventClick} popupOpen={handleEventClick} // This prevents the default behavior      
             >
                 <ViewsDirective >
                     <ViewDirective option='Day' startHour="08:00" endHour="21:00" interval={2} displayName="2 Days"></ViewDirective>
-                    <ViewDirective option='TimelineDay' startHour="08:00" endHour="21:00"></ViewDirective> 
+                    <ViewDirective option='TimelineDay' startHour="08:00" endHour="21:00"></ViewDirective>
                     <ViewDirective option='WorkWeek' isSelected={true} startHour="08:00" endHour="21:00" eventTemplate={eventTemplate} />
                     <ViewDirective option='Month' startHour="08:00" endHour="21:00" showWeekNumber={true} showWeekend={false}></ViewDirective>
                     <ViewDirective option='Agenda'></ViewDirective>
                 </ViewsDirective>
                 <Inject services={[Day, Week, WorkWeek, Month, Agenda, TimelineViews, TimelineMonth]} />
             </ScheduleComponent>
-            
+
             <div className="absolute top-4 right-4">
-                <label 
-                htmlFor="toggleNavbar"
-                className="text-white ms-2 text-sm font-medium">
-                    Show Menu         
+                <label
+                    htmlFor="toggleNavbar"
+                    className="text-white ms-2 text-sm font-medium">
+                    Show Menu
                 </label>
                 <input
                     type="checkbox"

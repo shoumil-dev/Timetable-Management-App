@@ -14,6 +14,11 @@ const Select = () => {
   const [selectedTimeslots, setSelectedTimeslots] = useState({});
   const [searchInput, setSearchInput] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [isNavbarVisible, setIsNavbarVisible] = useState(true);
+
+  const toggleNavbarVisibility = () => {
+    setIsNavbarVisible(!isNavbarVisible);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,7 +79,7 @@ const Select = () => {
   const searchUnits = async (input) => {
     const unitsRef = collection(db, "units");
     const q = query(unitsRef, where("title", ">=", input), orderBy("title"), startAfter(input));
-  
+
     try {
       const querySnapshot = await getDocs(q);
       const results = querySnapshot.docs.map((doc) => ({
@@ -105,7 +110,7 @@ const Select = () => {
         const hasTimeSlotClash = existingSlots.some(
           (slot) => slot.unit === selectedUnit && slot.timeSlot !== timeSlot && slot.timeSlot.includes(timeSlot)
         );
-  
+
         if (hasTimeSlotClash) {
           alert("Time slot clash! Please choose a different time slot.");
           return;
@@ -180,43 +185,45 @@ const Select = () => {
 
   return (
     <div className="bg-white shadow-xl overflow-hidden">
-      <header className="bg-black text-white text-center font-serif text-3xl py-6 border-b border-white">
-        Time Table Monash
+      <header className="bg-black text-white text-center font-serif text-3xl py-3 border-b border-white dark:border-zinc-900 flex justify-center items-center">
+        <img src="monash.png" className="h-14" alt="Monash University Logo" />
       </header>
-      <nav className="bg-black text-white p-4">
-        <ul className="flex space-x-4">
-          <li><a href="http://localhost:3000/User" className="hover:text-zinc-400"><FontAwesomeIcon icon={faUser} /></a></li>
-          <li>
-            <a href="http://localhost:3000/Home" className="hover:text-zinc-400">
-              Home
-            </a>
-          </li>
-          <li>
-            <a
-              href="http://localhost:3000/Select"
-              className="hover:text-zinc-400 bg-blue-500 text-white hover:bg-blue-600 p-4"
-            >
-              Timeslot allocation
-            </a>
-          </li>
-          <li className="ml-auto">
-            <a href="http://localhost:3000/" className="hover:text-zinc-400">
-              Log Out
-            </a>
-          </li>
-        </ul>
-      </nav>
+      {isNavbarVisible && (
+        <nav className="bg-black text-white p-4">
+          <ul className="flex space-x-4">
+            <li><a href="http://localhost:3000/User" className="hover:text-zinc-400"><FontAwesomeIcon icon={faUser} /></a></li>
+            <li>
+              <a href="http://localhost:3000/Home" className="hover:text-zinc-400">
+                Home
+              </a>
+            </li>
+            <li>
+              <a
+                href="http://localhost:3000/Select"
+                className="hover:text-zinc-400 bg-blue-500 text-white hover:bg-blue-600 p-4"
+              >
+                Timeslot allocation
+              </a>
+            </li>
+            <li className="ml-auto">
+              <a href="http://localhost:3000/" className="hover:text-zinc-400">
+                Log Out
+              </a>
+            </li>
+          </ul>
+        </nav>
+      )}
 
       <div className="flex h-screen dark:bg-zinc-900 text-black dark:text-white">
         <div className="overflow-auto ring-2 ring-zinc-300 w-1/5 rounded-2xl text-xl mr-4 m-20 text-center">
-        <input
+          <input
             type="text"
             placeholder="Search units..."
             value={searchInput}
             onChange={handleSearchChange}
             className="p-2 border-b-2 border-zinc-300 focus:outline-none focus:border-zinc-500"
           />
-          
+
           {searchResults.map((unit) => (
             <div
               key={unit.title}
@@ -249,8 +256,8 @@ const Select = () => {
               <div className="flex items-center">
                 <button
                   className={`ring-2 ring-zinc-300 ${selectedTimeslots[selectedUnit]?.includes(timeSlot)
-                      ? "bg-zinc-700 text-white"
-                      : "hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                    ? "bg-zinc-700 text-white"
+                    : "hover:bg-zinc-100 dark:hover:bg-zinc-700"
                     } rounded-full py-2 px-6 m-2 transition duration-300`}
                   onClick={() => handleSelectButtonClick(timeSlot)}
                   disabled={selectedTimeslots[selectedUnit]?.includes(timeSlot)}
@@ -270,6 +277,20 @@ const Select = () => {
             </div>
           ))}
         </div>
+      </div>
+      <div className="absolute top-4 right-4">
+        <label
+          htmlFor="toggleNavbar"
+          className="text-white ms-2 text-sm font-medium">
+          Show Menu
+        </label>
+        <input
+          type="checkbox"
+          id="toggleNavbar"
+          checked={isNavbarVisible}
+          onChange={toggleNavbarVisibility}
+          className="m-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+        />
       </div>
     </div>
   );
