@@ -22,11 +22,15 @@ registerLicense('Ngo9BigBOggjHTQxAR8/V1NAaF5cWWJCfEx3WmFZfVpgcl9CYVZTQGYuP1ZhSXx
 const Home = () => {
     const [selectedTimeslots, setSelectedTimeslots] = useState({});
     const [selectedLocation, setSelectedLocation] = useState({});
-
+    const [isNavbarVisible, setIsNavbarVisible] = useState(true);
     const [timeTableDataAllocated, setTimeTableDataAllocated] = useState([]);
     const [showNotification, setShowNotification] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const [userRole, setUserRole] = useState("");
+
+    const toggleNavbarVisibility = () => {
+        setIsNavbarVisible(!isNavbarVisible);
+    };
 
     const defaultColors = [
         '#4466ff',
@@ -266,20 +270,22 @@ const Home = () => {
                 <header className="bg-black text-white text-center font-serif text-3xl py-6 border-b border-white dark:border-zinc-900">
                     Time Table Monash
                 </header>
-                <nav className="bg-black text-white p-4">
-                    <ul className="flex space-x-4">
-                        <li><a href="http://localhost:3000/User" className="hover:text-gray-400"><FontAwesomeIcon icon={faUser} /></a></li>
-                        <li><Link to="/Home" className="hover:text-gray-400 bg-blue-500 text-white hover:bg-blue-600 p-4">Home</Link></li>
-                        {userRole === "lecturer" && <li><a href="http://localhost:3000/Create" className="hover:text-gray-400">Create Unit</a></li>}
-                        {userRole === "student" && <li><a href="http://localhost:3000/Select" className="hover:text-gray-400">Timeslot allocation</a></li>}
-                        <li className="ml-auto"><a href="http://localhost:3000/" className="hover:text-gray-400">Log Out</a></li>
-                        <li><button onClick={handleNotificationButtonClick}><FontAwesomeIcon icon={faBell} /></button>
-                            {showNotification && (
-                            <Notification notifications={notifications} onClose={handleNotificationClose} />
-                            )}
-                        </li>
-                    </ul>
-                </nav>
+                {isNavbarVisible && (
+                    <nav className="bg-black text-white p-4">
+                        <ul className="flex space-x-4">
+                            <li><a href="http://localhost:3000/User" className="hover:text-gray-400"><FontAwesomeIcon icon={faUser} /></a></li>
+                            <li><Link to="/Home" className="hover:text-gray-400 bg-blue-500 text-white hover:bg-blue-600 p-4">Home</Link></li>
+                            {userRole === "lecturer" && <li><a href="http://localhost:3000/Create" className="hover:text-gray-400">Create Unit</a></li>}
+                            {userRole === "student" && <li><a href="http://localhost:3000/Select" className="hover:text-gray-400">Timeslot allocation</a></li>}
+                            <li className="ml-auto"><a href="http://localhost:3000/" className="hover:text-gray-400">Log Out</a></li>
+                            <li><button onClick={handleNotificationButtonClick}><FontAwesomeIcon icon={faBell} /></button>
+                                {showNotification && (
+                                <Notification notifications={notifications} onClose={handleNotificationClose} />
+                                )}
+                            </li>
+                        </ul>
+                    </nav>
+                )}
             </div>
             <ScheduleComponent eventSettings={{ dataSource: timeTableDataAllocated}}  
             currentView="WorkWeek" height='825px' eventClick={handleEventClick} popupOpen={handleEventClick} // This prevents the default behavior      
@@ -294,6 +300,20 @@ const Home = () => {
                 <Inject services={[Day, Week, WorkWeek, Month, Agenda, TimelineViews, TimelineMonth]} />
             </ScheduleComponent>
             
+            <div className="absolute top-4 right-4">
+                <label 
+                htmlFor="toggleNavbar"
+                className="text-white ms-2 text-sm font-medium">
+                    Show Menu         
+                </label>
+                <input
+                    type="checkbox"
+                    id="toggleNavbar"
+                    checked={isNavbarVisible}
+                    onChange={toggleNavbarVisibility}
+                    className="m-2 w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                />
+            </div>
         </div>
     );
 };
