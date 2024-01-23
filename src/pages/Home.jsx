@@ -268,7 +268,7 @@ const Home = () => {
         <div className="dark:bg-zinc-900 h-screen" class={isDarkMode ? 'e-dark-mode' : ''}>
             <div className="bg-white dark:bg-zinc-900 shadow-xl overflow-hidden">
                 <header className="bg-black text-white text-center font-serif text-3xl py-3 border-b border-white dark:border-zinc-900 flex justify-center items-center">
-                    <img src="monash.png" className="h-14" alt="Monash University Logo" />
+                    <img src="monash.png" className="h-14" alt="Monash University Logo" style={{ zIndex:'999',marginTop:'55px' }} />
                 </header>
 
                 {isNavbarVisible && (
