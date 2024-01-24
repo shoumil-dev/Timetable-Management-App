@@ -6,6 +6,7 @@ import { auth } from "../firebase-handler";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { _TrueTypeLocaTable } from "@syncfusion/ej2/pdf";
 
 const Select = () => {
   const [units, setUnits] = useState([]);
@@ -104,8 +105,15 @@ const Select = () => {
         const existingSlots = userDocSnapshot.data().slots || [];
   
         // Check for clashes across different units
-        const hasTimeSlotClash = existingSlots.some((slot) =>
-          doTimeSlotsClash(slot.timeSlot, timeSlot)
+        var hasTimeSlotClash = false;
+        existingSlots.every((slot) =>
+          {
+            if (doTimeSlotsClash(slot.timeSlot, timeSlot)) {
+              hasTimeSlotClash = true;
+              return false;
+            }
+            return true;
+          }
         );
   
         if (hasTimeSlotClash) {
@@ -146,21 +154,29 @@ const Select = () => {
   };
   
   const doTimeSlotsClash = (timeSlot1, timeSlot2) => {
+    console.log(timeSlot1,timeSlot2)
     // Parse the day and time from the time slots
     const parseTime = (timeSlot) => {
-      const [day, range] = timeSlot.split(' ');
+      const [day, type, range] = timeSlot.split(' ');
       const [startTime, endTime] = range.split('-');
       return { day, startTime, endTime };
     };
   
     const { day: day1, startTime: start1, endTime: end1 } = parseTime(timeSlot1);
     const { day: day2, startTime: start2, endTime: end2 } = parseTime(timeSlot2);
-  
+    
+    console.log(day1)
+    console.log("aaa")
+    console.log(day2)
     // Check if the days are the same
-    if (day1 !== day2) {
+    if (!(day1.trim() === day2.trim())) {
+      console.log("ddd")
       return false;
     }
-  
+    console.log("-----")
+    console.log(start1,"qwe",start2)
+    console.log(end1,"qwe",end2)
+
     // Check for clash in time ranges
     return (
       (start1 <= start2 && end1 > start2) ||
@@ -171,30 +187,6 @@ const Select = () => {
   };
   
   
-  // Function to check if two time slots overlap
-  const doTimeSlotsOverlap = (timeSlot1, timeSlot2) => {
-    // Parse the start and end times from the time slots
-    const parseTime = (timeSlot) => {
-      const [day, range] = timeSlot.split(' ');
-      const [startTime, endTime] = range.split('-');
-      return { day, startTime, endTime };
-    };
-  
-    const { day: day1, startTime: start1, endTime: end1 } = parseTime(timeSlot1);
-    const { day: day2, startTime: start2, endTime: end2 } = parseTime(timeSlot2);
-  
-    // Check if the days are the same
-    if (day1 !== day2) {
-      return false;
-    }
-  
-    // Check for overlap in time ranges
-    return (start1 < end2 && end1 > start2) || (start2 < end1 && end2 > start1);
-  };
-  
-  
-  
-
   const handleDeselectButtonClick = async (timeSlot) => {
     if (selectedUnit && timeSlot) {
       const userId = auth.currentUser.uid;

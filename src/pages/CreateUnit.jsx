@@ -550,9 +550,14 @@ const CreateUnit = () => {
                   type="text"
                   value={newTimeSlot}
                   onChange={(e) => setNewTimeSlot(e.target.value)}
-                  placeholder="Enter timeslot"
+                  placeholder='Enter timeslot (Format: Day TypeClass hh:mm-hh:mm)'
                   className="border p-2 w-full mb-4 text-black"
                 />
+                <span style={{position:"relative"}}>
+                   Example: Tuesday Lab 14:00-16:00
+                </span>
+                <br/>
+                <br/>
                 <button
                   onClick={handleAddTimeSlot}
                   className="bg-blue-500 text-white p-2"
