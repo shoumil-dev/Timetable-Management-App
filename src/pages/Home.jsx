@@ -280,13 +280,20 @@ const Home = () => {
                             {userRole === "student" && <li><a href="http://localhost:3000/Select" className="hover:text-gray-400">Timeslot allocation</a></li>}
                             <li className="ml-auto"><a href="http://localhost:3000/" className="hover:text-gray-400">Log Out</a></li>
                             <li><button onClick={handleNotificationButtonClick}><FontAwesomeIcon icon={faBell} /></button>
-                                {showNotification && (
+                                {notifications.length > 0 && (
                                     <Notification notifications={notifications} onClose={handleNotificationClose} />
                                 )}
+                                {notifications.length > 0 && (
+                                    <span className="notification-count">{notifications.length}</span>
+                                )}
+                            {showNotification && (
+                                <Notification notifications={notifications} onClose={handleNotificationClose} />
+                            )}
                             </li>
                         </ul>
                     </nav>
-                )}
+                )
+                }
             </div>
             <ScheduleComponent eventSettings={{ dataSource: timeTableDataAllocated }}
                 currentView="WorkWeek" height='825px' eventClick={handleEventClick} popupOpen={handleEventClick} // This prevents the default behavior      
