@@ -265,10 +265,10 @@ const Home = () => {
 
 
     return (
-        <div className="dark:bg-zinc-900 h-screen" class={isDarkMode ? 'e-dark-mode' : ''} style={{ zIndex:'9999999999',marginTop:'5px' }}>
-            <div className="bg-white dark:bg-zinc-900 shadow-xl overflow-hidden" style={{ zIndex:'9999999999',marginTop:'5px' }}>
-                <header className="bg-black text-white text-center font-serif text-3xl py-3 border-b border-white dark:border-zinc-900 flex justify-center items-center" style={{ zIndex:'9999999999',marginTop:'-14px' }}>
-                    <img src="monash1.png" className="h-15" alt="Monash University Logo" style={{ zIndex:'9999999999999999999999999',marginTop:'5px' }} />
+        <div className="dark:bg-zinc-900 h-screen" class={isDarkMode ? 'e-dark-mode' : ''}>
+            <div className="bg-white dark:bg-zinc-900 shadow-xl overflow-hidden">
+                <header className="bg-black text-white text-center font-serif text-3xl py-3 border-b border-white dark:border-zinc-900 flex justify-center items-center" >
+                    <img src="monash1.png" className="h-15" alt="Monash University Logo" style={{ zIndex:'9999999999999999999999999' }} />
                 </header>
 
                 {isNavbarVisible && (
@@ -308,7 +308,7 @@ const Home = () => {
                 <Inject services={[Day, Week, WorkWeek, Month, Agenda, TimelineViews, TimelineMonth]} />
             </ScheduleComponent>
 
-            <div className="absolute top-4 right-4">
+            <div className="absolute top-4 right-4" style={{ zIndex:'99999999999999999999999999' }}>
                 <label
                     htmlFor="toggleNavbar"
                     className="text-white ms-2 text-sm font-medium">
