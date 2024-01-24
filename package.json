@@ -12,6 +12,7 @@
     "@syncfusion/ej2-icons": "24.1.41",
     "@syncfusion/ej2-lists": "24.1.41",
     "@syncfusion/ej2-navigations": "24.1.41",
+    "@syncfusion/ej2-pdf": "^24.1.47",
     "@syncfusion/ej2-pivotview": "24.1.44",
     "@syncfusion/ej2-react-base": "24.1.41",
     "@syncfusion/ej2-react-popups": "24.1.44",
