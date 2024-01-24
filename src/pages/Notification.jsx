@@ -30,7 +30,7 @@ const Notification = ({ notifications, onClose }) => {
     <div className={`notification-modal ${isOpen ? 'open' : 'closed'}`}>
       <div className="notification-content">
         <div className="notification-header">
-          <h3 style={{ display: 'inline-block', backgroundColor: 'red', padding: '5px', borderRadius: '3px',marginRight:'-400px' }}>{notifications.length}</h3>
+          <h3 style={{ display: 'inline-block', backgroundColor: 'red', padding: '5px', borderRadius: '3px',marginRight:'-350px' }}>{notifications.length}</h3>
           <h3 style={{ display: 'inline-block'}}>New notifications</h3>
           <button onClick={closeNotification}>&times;</button>
         </div>
