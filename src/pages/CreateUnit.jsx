@@ -225,112 +225,80 @@ const CreateUnit = () => {
     if (selectedUnit && selectedUnit.id && editedTimeSlot.trim() !== "") {
       try {
         const oriTimeslot = selectedTimeslot.timeSlot + "";
-        console.log("oriTimeslot: ", oriTimeslot)
         const updatedTimeSlots = [...timeSlots];
-
-        const slotCollection = collection(db, 'slots');
-        console.log(selectedTimeslot)
-
-        //console.log("selectedUnit.title:", selectedUnit.title);
-        //console.log("selectedTimeslot.timeSlot:", selectedTimeslot.timeSlot);
-
-        const slotQuery = query(
-          slotCollection,
-          where('unit', '==', selectedUnit.title),
-          where('timeSlot', '==', selectedTimeslot.timeSlot)
-        );
-        //console.log("Slot Query:", slotQuery);
-
-        const slotSnapshot = await getDocs(slotQuery);
-        //console.log("Slot Snapshot:", slotSnapshot.docs);
-
-        if (!slotSnapshot.empty) {
-          console.log("Inside if statement");
-          const slotDocRef = slotSnapshot.docs[0].ref;
-          //console.log(selectedTimeslot)
-
-          const updatedSlots = slots.map((slot) => {
-            if (slot.timeSlot) {
-              if (
-                slot.unit === selectedUnit.title
-              ) {
-                slot.timeSlot = editedTimeSlot.trim();
-                slot.location = editedLocation.trim();
-              };
-            }
-            return slot;
+  
+        // Split the edited timeslot into components
+        const [editedDay, editedTypeClass, editedTimeRange] = editedTimeSlot.split(" ");
+  
+        // Validate the components and proceed only if they are in the correct format
+        const isValidFormat =
+          editedDay &&
+          editedTypeClass &&
+          editedTimeRange &&
+          editedTimeRange.includes("-") &&
+          editedTimeRange.split("-").length === 2;
+  
+        if (isValidFormat) {
+          // Find the index of the edited timeslot in the array
+          const editedTimeSlotIndex = updatedTimeSlots.indexOf(oriTimeslot);
+  
+          // Construct the edited timeslot in the correct format
+          const editedTimeslotFormatted = `${editedDay} ${editedTypeClass} ${editedTimeRange}`;
+  
+          // Update the selected unit's timeslot array with the edited timeslot
+          updatedTimeSlots[editedTimeSlotIndex] = editedTimeslotFormatted;
+  
+          // Update the Firestore document for the selected unit
+          const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
+          await updateDoc(unitDocRef, {
+            timeslot: updatedTimeSlots,
           });
-          setSlots(updatedSlots)
-
-          // Update the notification field in the same slot document
-          const slotData = slotSnapshot.docs[0].data();
-          const notificationArray = slotData.notification || [];
-
-          await updateDoc(slotDocRef, {
-            timeSlot: editedTimeSlot.trim(),
-            location: editedLocation.trim(),
-            notification: [
-              ...notificationArray,
-              `${selectedUnit.title} ${selectedTimeslot.timeSlot.trim()} has been changed to ${editedTimeSlot.trim()}.`,
-            ],
-          });
-        }
-
-        // Loop through each user and update the corresponding timeSlot
-        const updatedUsers = users.map((user) => {
-          if (user.slots) {
-            user.slots.forEach((slot, index) => {
-              if (
-                slot.timeSlot === updatedTimeSlots[editedTimeSlotIndex] &&
-                slot.unit === selectedUnit.title
-              ) {
-                user.slots[index].timeSlot = editedTimeSlot.trim();
-                user.slots[index].location = editedLocation.trim();
-
-                const notificationMessage = `${selectedUnit.title} ${oriTimeslot} has been changed to ${editedTimeSlot.trim()}.`;
-                user.notifications = user.notifications || [];
-                user.notifications.push(notificationMessage);
-              }
+  
+          // Update the "slots" collection for the edited timeslot
+          const slotQuery = query(
+            collection(db, 'slots'),
+            where('unit', '==', selectedUnit.title),
+            where('timeSlot', '==', oriTimeslot)
+          );
+          const slotSnapshot = await getDocs(slotQuery);
+  
+          if (!slotSnapshot.empty) {
+            const slotDocRef = slotSnapshot.docs[0].ref;
+  
+            // Update the notification field in the same slot document
+            const notificationArray = slotSnapshot.docs[0].data().notification || [];
+            await updateDoc(slotDocRef, {
+              timeSlot: editedTimeslotFormatted,
+              location: editedLocation.trim(),
+              notification: [
+                ...notificationArray,
+                `${selectedUnit.title} ${oriTimeslot} has been changed to ${editedTimeslotFormatted}.`,
+              ],
             });
-            user.notifications = (user.notifications || []).filter(Boolean);
           }
-          return user;
-        });
-
-        // Update the users locally
-        setUsers(updatedUsers);
-
-        // Update the documents in Firestore for all users
-        const updateUsersPromises = updatedUsers.map(async (user) => {
-          const userDocRef = doc(collection(db, "users"), user.userId);
-          console.log("updateuserpromises line244")
-          await updateDoc(userDocRef, { slots: user.slots, notifications: user.notifications });
-        });
-        await Promise.all(updateUsersPromises);
-
-        updatedTimeSlots[editedTimeSlotIndex] = editedTimeSlot.trim();
-        const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
-        console.log("line251")
-        await updateDoc(unitDocRef, {
-          timeslot: updatedTimeSlots
-        });
-
-        // Show success notification
-        toast.success("Timeslot has been edited successfully!");
-
-        // Fetch the updated data from Firestore and log it
-        const updatedData = await fetchUpdatedData();
-        console.log("Updated data from Firestore:", updatedData);
-
-        setTimeSlots(updatedTimeSlots);
-        setSelectedUnit((prevUnit) => ({
-          ...prevUnit,
-          timeSlot: updatedTimeSlots
-        }));
-
-        setIsEditTimeSlotModalOpen(false);
-        setEditedTimeSlot("");
-        setEditedTimeSlotIndex(null);
+  
+          // Update the local state with the edited timeslots
+          setTimeSlots(updatedTimeSlots);
+  
+          // Update the selected unit's state with the edited timeslots
+          setSelectedUnit((prevUnit) => ({
+            ...prevUnit,
+            timeslot: updatedTimeSlots,
+          }));
+  
+          // Show success notification
+          toast.success("Timeslot has been edited successfully!");
+  
+          // Fetch the updated data from Firestore and log it
+          const updatedData = await fetchUpdatedData();
+          console.log("Updated data from Firestore:", updatedData);
+  
+          setIsEditTimeSlotModalOpen(false);
+          setEditedTimeSlot("");
+        } else {
+          // Show an error notification for invalid input format
+          toast.error("Invalid timeslot format. Please enter timeslot in the format (Day TypeClass hh:mm-hh:mm).");
+        }
       } catch (error) {
         console.error("Error updating document:", error);
         // Show error notification
@@ -338,6 +306,8 @@ const CreateUnit = () => {
       }
     }
   };
+  
+  
 
   const fetchUpdatedData = async () => {
     const unitsCollection = collection(db, "units");
