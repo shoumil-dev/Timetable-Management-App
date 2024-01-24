@@ -5,7 +5,7 @@ import { doc, collection, getDocs, updateDoc, getDoc, where, query, startAfter, 
 import { auth } from "../firebase-handler";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 
 const Select = () => {
   const [units, setUnits] = useState([]);
@@ -95,52 +95,105 @@ const Select = () => {
   const handleSelectButtonClick = async (timeSlot) => {
     if (selectedUnit && timeSlot) {
       const userId = auth.currentUser.uid;
-      console.log("current user Id: " + userId);
-
+  
       const usersRef = collection(db, "users");
       const userDocRef = doc(usersRef, userId);
       const userDocSnapshot = await getDoc(userDocRef);
-
+  
       if (userDocSnapshot.exists()) {
         const existingSlots = userDocSnapshot.data().slots || [];
-        const isAlreadySelected = existingSlots.some(
-          (slot) => slot.unit === selectedUnit && slot.timeSlot === timeSlot
+  
+        // Check for clashes across different units
+        const hasTimeSlotClash = existingSlots.some((slot) =>
+          doTimeSlotsClash(slot.timeSlot, timeSlot)
         );
-
-        const hasTimeSlotClash = existingSlots.some(
-          (slot) => slot.unit === selectedUnit && slot.timeSlot !== timeSlot && slot.timeSlot.includes(timeSlot)
-        );
-
+  
         if (hasTimeSlotClash) {
           alert("Time slot clash! Please choose a different time slot.");
           return;
         }
-
+  
+        const isAlreadySelected = existingSlots.some(
+          (slot) => slot.unit === selectedUnit && slot.timeSlot === timeSlot
+        );
+  
         const confirmed = window.confirm(
           `You are about to ${isAlreadySelected ? 'deselect' : 'select'} ${timeSlot} for ${selectedUnit}. Do you want to proceed?`
         );
-
+  
         if (!confirmed) {
           return;
         }
-
+  
         const updatedSlots = isAlreadySelected
-          ? existingSlots.filter((slot) => !(slot.unit === selectedUnit && slot.timeSlot === timeSlot))
+          ? existingSlots.filter(
+              (slot) => !(slot.unit === selectedUnit && slot.timeSlot === timeSlot)
+            )
           : [...existingSlots, { unit: selectedUnit, timeSlot: timeSlot }];
-
+  
         await updateDoc(userDocRef, {
           slots: updatedSlots,
         });
-
+  
         setSelectedTimeslots((prevSelectedTimeslots) => ({
           ...prevSelectedTimeslots,
           [selectedUnit]: updatedSlots.map((slot) => slot.timeSlot),
         }));
-
+  
         console.log(`Successfully ${isAlreadySelected ? 'removed' : 'added'} timeslot`);
       }
     }
   };
+  
+  const doTimeSlotsClash = (timeSlot1, timeSlot2) => {
+    // Parse the day and time from the time slots
+    const parseTime = (timeSlot) => {
+      const [day, range] = timeSlot.split(' ');
+      const [startTime, endTime] = range.split('-');
+      return { day, startTime, endTime };
+    };
+  
+    const { day: day1, startTime: start1, endTime: end1 } = parseTime(timeSlot1);
+    const { day: day2, startTime: start2, endTime: end2 } = parseTime(timeSlot2);
+  
+    // Check if the days are the same
+    if (day1 !== day2) {
+      return false;
+    }
+  
+    // Check for clash in time ranges
+    return (
+      (start1 <= start2 && end1 > start2) ||
+      (start2 <= start1 && end2 > start1) ||
+      (start1 >= start2 && start1 < end2) ||
+      (start2 >= start1 && start2 < end1)
+    );
+  };
+  
+  
+  // Function to check if two time slots overlap
+  const doTimeSlotsOverlap = (timeSlot1, timeSlot2) => {
+    // Parse the start and end times from the time slots
+    const parseTime = (timeSlot) => {
+      const [day, range] = timeSlot.split(' ');
+      const [startTime, endTime] = range.split('-');
+      return { day, startTime, endTime };
+    };
+  
+    const { day: day1, startTime: start1, endTime: end1 } = parseTime(timeSlot1);
+    const { day: day2, startTime: start2, endTime: end2 } = parseTime(timeSlot2);
+  
+    // Check if the days are the same
+    if (day1 !== day2) {
+      return false;
+    }
+  
+    // Check for overlap in time ranges
+    return (start1 < end2 && end1 > start2) || (start2 < end1 && end2 > start1);
+  };
+  
+  
+  
 
   const handleDeselectButtonClick = async (timeSlot) => {
     if (selectedUnit && timeSlot) {
