@@ -105,8 +105,9 @@ const Select = () => {
   
         // Check for clashes across different units
         const hasTimeSlotClash = existingSlots.some((slot) =>
-          doTimeSlotsClash(slot.timeSlot, timeSlot)
+          doTimeSlotsOverlap(slot.timeSlot, timeSlot),
         );
+        console.log(hasTimeSlotClash)
   
         if (hasTimeSlotClash) {
           alert("Time slot clash! Please choose a different time slot.");
@@ -146,7 +147,6 @@ const Select = () => {
   };
   
   const doTimeSlotsClash = (timeSlot1, timeSlot2) => {
-    // Parse the day and time from the time slots
     const parseTime = (timeSlot) => {
       const [day, range] = timeSlot.split(' ');
       const [startTime, endTime] = range.split('-');
@@ -163,8 +163,8 @@ const Select = () => {
   
     // Check for clash in time ranges
     return (
-      (start1 <= start2 && end1 > start2) ||
-      (start2 <= start1 && end2 > start1) ||
+      (start1 <= end2 && end1 > start2) ||
+      (start2 <= end1 && end2 > start1) ||
       (start1 >= start2 && start1 < end2) ||
       (start2 >= start1 && start2 < end1)
     );
@@ -173,23 +173,46 @@ const Select = () => {
   
   // Function to check if two time slots overlap
   const doTimeSlotsOverlap = (timeSlot1, timeSlot2) => {
-    // Parse the start and end times from the time slots
-    const parseTime = (timeSlot) => {
-      const [day, range] = timeSlot.split(' ');
-      const [startTime, endTime] = range.split('-');
-      return { day, startTime, endTime };
-    };
+    function parseTimeSlot(timeSlot) {
+      // Split the time slot into parts using spaces
+      const parts = timeSlot.split(' ');
   
-    const { day: day1, startTime: start1, endTime: end1 } = parseTime(timeSlot1);
-    const { day: day2, startTime: start2, endTime: end2 } = parseTime(timeSlot2);
+      // Find the position of the time range
+      let timeRangeIndex = parts.length - 1;
+      while (!parts[timeRangeIndex].includes('-')) {
+        timeRangeIndex--;
+      }
   
-    // Check if the days are the same
-    if (day1 !== day2) {
-      return false;
+      // Extract day and event
+      const day = parts[0];
+      const event = parts.slice(1, timeRangeIndex).join(' ');
+  
+      // Extract start and end times
+      const timeRange = parts[timeRangeIndex].split('-');
+      const start_time = timeRange[0];
+      const end_time = timeRange[1];
+  
+      const startMinutes = convertToMinutes(start_time);
+      const endMinutes = convertToMinutes(end_time);
+  
+      return { day, event, startMinutes, endMinutes };
     }
   
-    // Check for overlap in time ranges
-    return (start1 < end2 && end1 > start2) || (start2 < end1 && end2 > start1);
+    function convertToMinutes(timeStr) {
+      const [hours, minutes] = timeStr.split(':').map(Number);
+      return hours * 60 + minutes;
+    }
+  
+    const { day: day1, event: event1, startMinutes: start1, endMinutes: end1 } = parseTimeSlot(timeSlot1);
+    const { day: day2, event: event2, startMinutes: start2, endMinutes: end2 } = parseTimeSlot(timeSlot2);
+  
+    if (day1 === day2) {
+      // Check for time overlap
+      if ((start1 < end2 && end1 > start2) || (start2 < end1 && end2 > start1)) {
+        return true; // Overlap detected
+      }
+    }
+    return false;
   };
   
   
