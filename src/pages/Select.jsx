@@ -154,7 +154,7 @@ const Select = () => {
   };
   
   const doTimeSlotsClash = (timeSlot1, timeSlot2) => {
-    console.log(timeSlot1,timeSlot2)
+    // console.log(timeSlot1,timeSlot2)
     // Parse the day and time from the time slots
     const parseTime = (timeSlot) => {
       const [day, type, range] = timeSlot.split(' ');
@@ -165,17 +165,14 @@ const Select = () => {
     const { day: day1, startTime: start1, endTime: end1 } = parseTime(timeSlot1);
     const { day: day2, startTime: start2, endTime: end2 } = parseTime(timeSlot2);
     
-    console.log(day1)
-    console.log("aaa")
-    console.log(day2)
+    // console.log(day1)
+    // console.log("aaa")
+    // console.log(day2)
     // Check if the days are the same
     if (!(day1.trim() === day2.trim())) {
-      console.log("ddd")
       return false;
     }
-    console.log("-----")
-    console.log(start1,"qwe",start2)
-    console.log(end1,"qwe",end2)
+
 
     // Check for clash in time ranges
     return (
