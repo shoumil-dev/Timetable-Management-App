@@ -78,16 +78,18 @@ const CreateUnit = () => {
   const filterUnitsBySlots = () => {
     // Filter units based on the user's slots
     const userSlots = selectedUnit.slots || [];
-    const filteredUnits = units.filter((unit) =>
-      userSlots.some((slot) => slot.unit === unit.title)
-    );
-
+    const filteredUnits = units.map((unit) => ({
+      ...unit,
+      isVisible: userSlots.some((slot) => slot.unit === unit.title),
+    }));
+  
     setUnits(filteredUnits);
   };
-
+  
   useEffect(() => {
     filterUnitsBySlots();
   }, [selectedUnit]);
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -155,54 +157,40 @@ const CreateUnit = () => {
     if (selectedUnit && selectedUnit.id && newTimeSlot.trim() !== "") {
       try {
         const updatedTimeSlots = [...timeSlots, newTimeSlot.trim()];
-
+  
         await addSlotToFirestore(selectedUnit.id, newTimeSlot.trim());
-
+  
         const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
-
+  
         await updateDoc(unitDocRef, { timeslot: updatedTimeSlots });
-
+  
         console.log("Updated timeSlots:", updatedTimeSlots);
-
-        // Update the 'slots' field in the user document for each user
-        const updatedUsers = users.map((user) => {
-          if (!user.slots) {
-            user.slots = []; // Initialize slots as an empty array if it doesn't exist
-          }
-          user.slots.push({
-            unit: selectedUnit.title,
-            timeSlot: newTimeSlot.trim(),
-            location: "",  // Add location if needed
-          });
-          return user;
+  
+        // Update the 'slots' field in Firestore with the new time slot
+        const slotCollection = collection(db, 'slots');
+        await addDoc(slotCollection, {
+          unit: selectedUnit.title,
+          timeSlot: newTimeSlot.trim(),
+          location: "",  // Add location if needed
         });
-
-        // Update the users locally
-        setUsers(updatedUsers);
-
-        // Update the documents in Firestore for all users
-        const updateUsersPromises = updatedUsers.map(async (user) => {
-          const userDocRef = doc(collection(db, "users"), user.userId);
-          await updateDoc(userDocRef, { slots: user.slots });
-        });
-        await Promise.all(updateUsersPromises);
-
+  
         // Fetch the updated data from Firestore and log it
         const updatedData = await fetchUpdatedData();
         console.log("Updated data from Firestore:", updatedData);
-
+  
         setTimeSlots(updatedTimeSlots);
         setSelectedUnit((prevUnit) => ({
           ...prevUnit,
           timeslot: updatedTimeSlots,
         }));
-
+  
         setIsAddTimeSlotModalOpen(false);
       } catch (error) {
         console.error("Error updating document:", error);
       }
     }
   };
+  
 
   const handleEditTimeSlotClick = (timeSlot, index) => {
     console.log("Edit timeslot button clicked"); // Check if this is logged
