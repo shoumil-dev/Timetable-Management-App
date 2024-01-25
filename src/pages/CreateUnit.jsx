@@ -211,55 +211,55 @@ const CreateUnit = () => {
 
   const handleEditTimeSlot = async () => {
     if (selectedUnit && selectedUnit.id && editedTimeSlot.trim() !== "") {
+      // Validate the format of editedTimeSlot
+      const timeSlotRegex = /^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday) \w+( \d{1,2}:\d{2}-\d{1,2}:\d{2})?$/;
+  
+      if (!timeSlotRegex.test(editedTimeSlot.trim())) {
+        // Show an error message or handle the invalid format
+        console.error("Invalid time slot format. Please enter a valid format.");
+        return;
+      }
+  
       try {
         const oriTimeslot = selectedTimeslot.timeSlot + "";
-        console.log("oriTimeslot: ", oriTimeslot)
+        console.log("oriTimeslot: ", oriTimeslot);
         const updatedTimeSlots = [...timeSlots];
-
+  
         const slotCollection = collection(db, 'slots');
-        console.log(selectedTimeslot)
-
-        //console.log("selectedUnit.title:", selectedUnit.title);
-        //console.log("selectedTimeslot.timeSlot:", selectedTimeslot.timeSlot);
-
+  
         const slotQuery = query(
           slotCollection,
           where('unit', '==', selectedUnit.title),
-          where('timeSlot', '==', selectedTimeslot.timeSlot)
+          where('timeSlot', '==', oriTimeslot)
         );
-        //console.log("Slot Query:", slotQuery);
-
+  
         const slotSnapshot = await getDocs(slotQuery);
-        //console.log("Slot Snapshot:", slotSnapshot.docs);
-
+  
         if (!slotSnapshot.empty) {
           console.log("Inside if statement");
           const slotDocRef = slotSnapshot.docs[0].ref;
-          //console.log(selectedTimeslot)
-
+  
           const updatedSlots = slots.map((slot) => {
             if (slot.timeSlot) {
-              if (
-                slot.unit === selectedUnit.title
-              ) {
+              if (slot.unit === selectedUnit.title) {
                 slot.timeSlot = editedTimeSlot.trim();
                 slot.location = editedLocation.trim();
-              };
+              }
             }
             return slot;
           });
-          setSlots(updatedSlots)
-
+          setSlots(updatedSlots);
+  
           // Update the notification field in the same slot document
           const slotData = slotSnapshot.docs[0].data();
           const notificationArray = slotData.notification || [];
-
+  
           await updateDoc(slotDocRef, {
             timeSlot: editedTimeSlot.trim(),
             location: editedLocation.trim(),
             notification: [
               ...notificationArray,
-              `${selectedUnit.title} ${selectedTimeslot.timeSlot.trim()} has been changed to ${editedTimeSlot.trim()}.`,
+              `${selectedUnit.title} ${oriTimeslot} has been changed to ${editedTimeSlot.trim()}.`,
             ],
           });
         }
