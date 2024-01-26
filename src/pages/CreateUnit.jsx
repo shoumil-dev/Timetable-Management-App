@@ -82,14 +82,14 @@ const CreateUnit = () => {
       ...unit,
       isVisible: userSlots.some((slot) => slot.unit === unit.title),
     }));
-  
+
     setUnits(filteredUnits);
   };
-  
+
   useEffect(() => {
     filterUnitsBySlots();
   }, [selectedUnit]);
-  
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -153,44 +153,60 @@ const CreateUnit = () => {
     setIsAddTimeSlotModalOpen(true);
   };
 
+  const validateTimeSlotFormat = (timeSlot) => {
+    const timeSlotRegex = /^(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday) \w+( \d{1,2}:\d{2}-\d{1,2}:\d{2})?$/;
+    return timeSlotRegex.test(timeSlot);
+  };
+
   const handleAddTimeSlot = async () => {
+
     if (selectedUnit && selectedUnit.id && newTimeSlot.trim() !== "") {
-      try {
-        const updatedTimeSlots = [...timeSlots, newTimeSlot.trim()];
-  
-        await addSlotToFirestore(selectedUnit.id, newTimeSlot.trim());
-  
-        const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
-  
-        await updateDoc(unitDocRef, { timeslot: updatedTimeSlots });
-  
-        console.log("Updated timeSlots:", updatedTimeSlots);
-  
-        // Update the 'slots' field in Firestore with the new time slot
-        const slotCollection = collection(db, 'slots');
-        await addDoc(slotCollection, {
-          unit: selectedUnit.title,
-          timeSlot: newTimeSlot.trim(),
-          location: "",  // Add location if needed
-        });
-  
-        // Fetch the updated data from Firestore and log it
-        const updatedData = await fetchUpdatedData();
-        console.log("Updated data from Firestore:", updatedData);
-  
-        setTimeSlots(updatedTimeSlots);
-        setSelectedUnit((prevUnit) => ({
-          ...prevUnit,
-          timeslot: updatedTimeSlots,
-        }));
-  
-        setIsAddTimeSlotModalOpen(false);
-      } catch (error) {
-        console.error("Error updating document:", error);
+      const isValidFormat = validateTimeSlotFormat(newTimeSlot.trim());
+
+      if (!isValidFormat) {
+        // Show an error message or handle the invalid format
+        toast.error("Invalid time slot format. Please enter a valid format.");
+        return;
+      }
+
+      if (selectedUnit && selectedUnit.id && newTimeSlot.trim() !== "") {
+        try {
+          const updatedTimeSlots = [...timeSlots, newTimeSlot.trim()];
+
+          await addSlotToFirestore(selectedUnit.id, newTimeSlot.trim());
+
+          const unitDocRef = doc(collection(db, "units"), selectedUnit.id);
+
+          await updateDoc(unitDocRef, { timeslot: updatedTimeSlots });
+
+          console.log("Updated timeSlots:", updatedTimeSlots);
+
+          // Update the 'slots' field in Firestore with the new time slot
+          const slotCollection = collection(db, 'slots');
+          await addDoc(slotCollection, {
+            unit: selectedUnit.title,
+            timeSlot: newTimeSlot.trim(),
+            location: "",  // Add location if needed
+          });
+
+          // Fetch the updated data from Firestore and log it
+          const updatedData = await fetchUpdatedData();
+          console.log("Updated data from Firestore:", updatedData);
+
+          setTimeSlots(updatedTimeSlots);
+          setSelectedUnit((prevUnit) => ({
+            ...prevUnit,
+            timeslot: updatedTimeSlots,
+          }));
+
+          setIsAddTimeSlotModalOpen(false);
+        } catch (error) {
+          console.error("Error updating document:", error);
+        }
       }
     }
   };
-  
+
 
   const handleEditTimeSlotClick = (timeSlot, index) => {
     console.log("Edit timeslot button clicked"); // Check if this is logged
@@ -216,6 +232,7 @@ const CreateUnit = () => {
   
       if (!timeSlotRegex.test(editedTimeSlot.trim())) {
         // Show an error message or handle the invalid format
+        toast.error("Invalid time slot format. Please enter a valid format.");
         console.error("Invalid time slot format. Please enter a valid format.");
         return;
       }
@@ -541,11 +558,11 @@ const CreateUnit = () => {
                   placeholder='Enter timeslot (Format: Day TypeClass hh:mm-hh:mm)'
                   className="border p-2 w-full mb-4 text-black"
                 />
-                <span style={{position:"relative"}}>
-                   Example: Tuesday Lab 14:00-16:00
+                <span style={{ position: "relative" }}>
+                  Example: Tuesday Lab 14:00-16:00
                 </span>
-                <br/>
-                <br/>
+                <br />
+                <br />
                 <button
                   onClick={handleAddTimeSlot}
                   className="bg-blue-500 text-white p-2"
