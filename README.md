@@ -43,16 +43,16 @@ We use Firebase's Firestore database for storage, reading and writing of data. H
 
 Each unit is stored in the **units** *collection* as a *document*. Inside each unit, there are two *fields*. These are the **timeslot** array and the **title**.
 
-The **timeslot** array has a very specific format. It is in the form of: `<day> <typeofclass> <starttime> - <endtime>`. 
+The **timeslot** array has a very specific format. It is in the form of: `<day> <typeofclass> <starttime>-<endtime>`. 
 
 So, for example, a slot would be:
-> Monday Forum 12:00 - 15:00
+> Monday Forum 12:00-15:00
 
 Note that the time should be in the 24h format.
 
-On the other hand, each user is stored in the **users** *collection*. Each user has a number of fields. These are **email**, **name**, **role**, **userId** and the **slots** array.
+On the other hand, each user is stored in the **users** *collection*. Each user has a number of fields. These are **email**, **name**, **role**, **userId** and the **slots** and **notifications** arrays.
 
-Each entry in the **slots** array has a **timeslot** and a **unit** associated with it.
+Each entry in the **slots** array has a **timeSlot**, **location**, **notification** array and a **unit** name.
 
 Therefore, the structure of the firestore filesystem is as follows.
 
@@ -65,11 +65,19 @@ Therefore, the structure of the firestore filesystem is as follows.
 >       - email
 >       - name
 >       - role
->       - slots
+>       - slots (array)
 >          - slot (as an index)
+>             - location
 >             - timeslot
 >             - unit
+>       - notifications (array)
 >       - userId
+> - slots
+>    - slot (stored as an id)
+>       - location
+>       - notification (array)
+>       - timeSlot
+>       - unit
 
 **Note: The userIDs are auto-generated.**
 
@@ -86,13 +94,8 @@ For security, we rely on Google's Firebase encryption. The only way to gain acce
 Share plans for future development, upcoming features, improvements, or known limitations to be addressed in future releases.
 
 For future releases, our roadmap suggests implementing the following features:
-- Dark mode 🌙
 - Profile pictures for users 📸
 - Sounds when interacting with elements 🔊
-
-Our limitations at the moment are:
-- The application cannot show the classroom for the allocated timeslot
-- Our application does not account for clashes, both slots are shown allocated together
 
 ### Licensing 📄
 The Timetable Management App is distributed under the MIT license. Refer to the LICENSE file for details.
