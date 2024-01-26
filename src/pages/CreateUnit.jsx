@@ -339,7 +339,7 @@ const CreateUnit = () => {
       } catch (error) {
         console.error("Error updating document:", error);
         // Show error notification
-        toast.error("Error updating timeslot. Please try again.");
+        toast.error("Error updating timeslot. You can only update timeslots created by this account.");
       }
     }
   };
